@@ -42,6 +42,9 @@ GameObject:
   - component: {fileID: 114103665495488134}
   - component: {fileID: 114541155181869830}
   - component: {fileID: 114831449173337136}
+  - component: {fileID: 114448897352205100}
+  - component: {fileID: 114572327258597188}
+  - component: {fileID: 114139819619425254}
   m_Layer: 0
   m_Name: InputManager
   m_TagString: Untagged
@@ -707,6 +710,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonType: 12
+--- !u!114 &114139819619425254
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1073881161640376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfb7620140a7b044d9abeed031fa36d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114193939822982814
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -810,6 +824,18 @@ MonoBehaviour:
   autoStartObserver: 1
   drawVisualMeshes: 0
   castShadows: 0
+--- !u!114 &114448897352205100
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1073881161640376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 522d839ce678347478c483a1abab3bca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 1785781380907578, guid: cfad45f5185ab90488cc8ab47369f6fb, type: 2}
 --- !u!114 &114541155181869830
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -823,7 +849,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   RecognizerStart: 0
   KeywordsAndResponses:
-  - Keyword: Create new note
+  - Keyword: Create note
     KeyCode: 0
     Response:
       m_PersistentCalls:
@@ -841,7 +867,7 @@ MonoBehaviour:
           m_CallState: 2
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
-  - Keyword: Edit note
+  - Keyword: Show keyboard
     KeyCode: 0
     Response:
       m_PersistentCalls:
@@ -895,6 +921,53 @@ MonoBehaviour:
           m_CallState: 2
       m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
+  - Keyword: Edit note
+    KeyCode: 0
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114831449173337136}
+          m_MethodName: startSpeech
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - Keyword: Clear note
+    KeyCode: 0
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114831449173337136}
+          m_MethodName: clearNote
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+--- !u!114 &114572327258597188
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1073881161640376}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fec9cb0e9ac2514988a484b8b204fa3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114588180127776710
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -968,6 +1041,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseRailsNavigation: 0
+  isTapping: 0
 --- !u!114 &114782044286612762
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -12,13 +12,17 @@ public class VoiceCommands : MonoBehaviour
     public static bool keyboardCreated = false;
     private connect dbconnection;
     private select dbselect;
+    private SpeechManager speech;
+    private AudioSource audio;
 
     // Use this for initialization
 
     public void Start()
     {
+        audio = gameObject.GetComponent<AudioSource>();
         dbconnection = new connect();
         dbselect = new select();
+        speech = GetComponent < SpeechManager> ();
         
     }
 
@@ -33,6 +37,17 @@ public class VoiceCommands : MonoBehaviour
             KeyBoardOutput.createKeyboard(GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).gameObject);
         }
 
+    }
+
+    public void clearNote()
+    {
+        if (GazeManager.Instance.IsGazingAtObject)
+        {
+            GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text = "";
+        }
+        Debug.Log(GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text);
+        dbconnection.editNote(GazeManager.Instance.HitObject.GetComponentInChildren<NoteCommands>().noteId.ToString(), "");
+        SpeechManager.clearText();
     }
 
     /// <summary>
@@ -63,6 +78,16 @@ public class VoiceCommands : MonoBehaviour
         dbconnection.deleteNote(GazeManager.Instance.HitObject.GetComponentInChildren<NoteCommands>().noteId.ToString());
     }
 
+    public void startSpeech()
+    {
+        if (GazeManager.Instance.IsGazingAtObject)
+        {
+
+            speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).gameObject);
+        }
+        
+    }
+
     /// <summary>
     /// Gets all notes from the server and display them
     /// infront of you.
@@ -78,7 +103,5 @@ public class VoiceCommands : MonoBehaviour
                 notepad.GetComponentInChildren<NoteCommands>().noteId = i + 1;
             }
         }));
-      
-
     }
 }

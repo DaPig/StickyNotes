@@ -14,6 +14,7 @@ namespace HoloToolkit.Unity.InputModule
     {
         [Tooltip("Set to true to use the use rails (guides) for the navigation gesture, as opposed to full 3D navigation.")]
         public bool UseRailsNavigation = false;
+        public bool isTapping = false;
 
         private GestureRecognizer gestureRecognizer;
         private GestureRecognizer navigationGestureRecognizer;
@@ -46,6 +47,7 @@ namespace HoloToolkit.Unity.InputModule
             gestureRecognizer.SetRecognizableGestures(GestureSettings.Tap | 
                                                       GestureSettings.ManipulationTranslate |
                                                       GestureSettings.Hold);
+
             gestureRecognizer.StartCapturingGestures();
 
             // We need a separate gesture recognizer for navigation, since it isn't compatible with manipulation
