@@ -10,8 +10,10 @@ public class NoteCommands : MonoBehaviour
     //The id of the note.
     public int noteId;
 
+
     // Use this for initialization
     void Start()
     {
+        //notes[notes.Length] = gameObject.transform.parent.gameObject;
     }
 }

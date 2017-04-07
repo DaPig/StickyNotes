@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 82ee8060d8b20aa44a8c02b204c9a21e
+timeCreated: 1491550324
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Angelina
+  fontNames:
+  - Angelina
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

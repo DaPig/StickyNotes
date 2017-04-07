@@ -4,6 +4,9 @@ using HoloToolkit.Unity.InputModule;
 using UnityEngine.UI;
 using conn;
 using selectnotes;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
+using HoloToolkit.Unity.SpatialMapping;
 
 public class VoiceCommands : MonoBehaviour
 {
@@ -14,16 +17,23 @@ public class VoiceCommands : MonoBehaviour
     private select dbselect;
     private SpeechManager speech;
     private AudioSource audio;
+    public List<GameObject> notes;
+    public bool hit;
+    public RaycastHit hitInfo;
 
     // Use this for initialization
-
     public void Start()
     {
         audio = gameObject.GetComponent<AudioSource>();
         dbconnection = new connect();
         dbselect = new select();
         speech = GetComponent < SpeechManager> ();
-        
+        notes = new List<GameObject>();
+    }
+
+    void Update()
+    {
+        hit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 20f, SpatialMappingManager.Instance.LayerMask);
     }
 
     /// <summary>
@@ -36,9 +46,11 @@ public class VoiceCommands : MonoBehaviour
             keyboardCreated = true;
             KeyBoardOutput.createKeyboard(GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).gameObject);
         }
-
     }
 
+    /// <summary>
+    /// Clear the text on the current note you're looking at.
+    /// </summary>
     public void clearNote()
     {
         if (GazeManager.Instance.IsGazingAtObject)
@@ -56,13 +68,20 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void makeNew()
     {
-        StartCoroutine(dbconnection.insertString((id) =>
+        if (hit)
         {
-            Quaternion lockrotation = Camera.main.transform.localRotation;
-            GameObject notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-            notepad.GetComponentInChildren<NoteCommands>().noteId = Int32.Parse(id);
-        }, ""));
-
+            StartCoroutine(dbconnection.insertString((id) =>
+            {
+                Quaternion lockrotation = Camera.main.transform.localRotation;
+                GameObject notepad = Instantiate(Notepad, hitInfo.point + Camera.main.transform.forward * -0.05f , Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                notepad.GetComponentInChildren<NoteCommands>().noteId = Int32.Parse(id);
+                Debug.Log(notepad.name);
+                notes.Add(notepad);
+            }, ""));
+            StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+        }
+        
+        //Destroy(StartScript.texts[0]);
     }
 
     /// <summary>
@@ -76,16 +95,20 @@ public class VoiceCommands : MonoBehaviour
             Destroy(GazeManager.Instance.HitObject.gameObject);
         }
         dbconnection.deleteNote(GazeManager.Instance.HitObject.GetComponentInChildren<NoteCommands>().noteId.ToString());
+        StartScript.texts[2].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+
     }
 
+    /// <summary>
+    /// Starts the speech dictation to be able to use speech-to-text.
+    /// </summary>
     public void startSpeech()
     {
         if (GazeManager.Instance.IsGazingAtObject)
         {
-
             speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).gameObject);
         }
-        
+        StartScript.texts[0].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
     }
 
     /// <summary>
@@ -103,5 +126,27 @@ public class VoiceCommands : MonoBehaviour
                 notepad.GetComponentInChildren<NoteCommands>().noteId = i + 1;
             }
         }));
+    }
+
+    /// <summary>
+    /// Removes all notes from the GUI but not from the database and instantiates the tutorial again.
+    /// </summary>
+    public void clearAllNotes()
+    {
+        foreach(GameObject game in notes)
+        {
+            Destroy(game);
+        }
+        GameObject startTexts = GameObject.Find("StartManager");
+        startTexts.GetComponent<StartScript>().Clear();
+        startTexts.GetComponent<StartScript>().Init();
+    }
+
+    /// <summary>
+    /// Activates the login scene.
+    /// </summary>
+    public void login()
+    {
+        SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
     }
 }

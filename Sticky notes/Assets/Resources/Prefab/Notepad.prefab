@@ -99,6 +99,7 @@ GameObject:
   - component: {fileID: 114148341891615860}
   - component: {fileID: 114508657885518036}
   - component: {fileID: 82021982129821386}
+  - component: {fileID: 114288415834802282}
   m_Layer: 5
   m_Name: Notepad
   m_TagString: Untagged
@@ -156,7 +157,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1499227530003274
 GameObject:
   m_ObjectHideFlags: 1
@@ -201,7 +202,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1456371194503776}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.0854, y: 0.7925, z: -0.7573}
   m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_Children:
   - {fileID: 224854898865090924}
@@ -464,6 +465,18 @@ MonoBehaviour:
   PlaceParentOnTap: 1
   ParentGameObjectToPlace: {fileID: 1412664505275914}
   IsBeingPlaced: 0
+--- !u!114 &114288415834802282
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1412664505275914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ae3046fad08e04ba8d6d92ad86e4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  voice: {fileID: 0}
 --- !u!114 &114293856058888508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -570,6 +583,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   text: {fileID: 0}
+  loading: {fileID: 0}
 --- !u!114 &114524427991446910
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -646,7 +660,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 962cc93454f115c4ba2689c0ba1bde52, type: 3}
     m_FontSize: 150
     m_FontStyle: 0
     m_BestFit: 0

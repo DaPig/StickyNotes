@@ -11,6 +11,7 @@ namespace conn
         string deleteURL = "http://libanaden.com/deleteNote.php";
         string insertURL = "http://libanaden.com/insertData.php";
         string editURL = "http://libanaden.com/editnote.php";
+        string createUserURL = "http://libanaden.com/CreateUser.php";
         public string id;
 
 
@@ -39,6 +40,16 @@ namespace conn
             form.AddField("content", newContent);
             WWW www = new WWW(editURL, form);
         }
+
+        public void insertUser(string username, string password, string email)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("username", username);
+            form.AddField("password", password);
+            form.AddField("email", email);
+            WWW www = new WWW(createUserURL, form);
+        }
+
     }
 
 }

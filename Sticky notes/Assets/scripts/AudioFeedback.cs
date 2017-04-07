@@ -9,8 +9,11 @@ public class AudioFeedback : MonoBehaviour {
 	void Start () {
 		
 	}
-	
-	public void playSound()
+
+    /// <summary>
+    /// Plays a soundclip for audiofeedback.
+    /// </summary>
+    public void playSound()
     {
         GazeManager.Instance.HitObject.GetComponent<AudioSource>().Play();
     }

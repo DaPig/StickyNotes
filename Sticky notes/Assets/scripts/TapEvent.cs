@@ -16,6 +16,9 @@ public class TapEvent : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// Stops the recording on tap.
+    /// </summary>
     private void OnTap(InteractionSourceKind source, int tapCount, Ray headRay)
     {
         if (speaking)

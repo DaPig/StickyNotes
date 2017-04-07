@@ -7,6 +7,7 @@ using UnityEngine.Windows.Speech;
 using HoloToolkit.Unity.SpatialMapping;
 using conn;
 
+
 public class SpeechManager : MonoBehaviour
 {
     public GameObject text;
@@ -14,6 +15,13 @@ public class SpeechManager : MonoBehaviour
     private static GameObject notepad;
     private static DictationRecognizer dictationRecognizer;
     private AudioFeedback audio;
+
+    private float current;
+    private float timestamp;
+
+    public GameObject loading;
+    private GameObject currentLoading;
+
 
     private static connect dbconnection;
 
@@ -23,30 +31,36 @@ public class SpeechManager : MonoBehaviour
     // Using an empty string specifies the default microphone. 
     private static string deviceName = string.Empty;
     private int samplingRate;
-    private const int messageLength = 1;
+    private const int messageLength = 60;
 
     // Use this to reset the UI once the Microphone is done recording after it was started.
     private static bool hasRecordingStarted;
     private bool stop = false;
 
+
+    private float hej = 0;
     //TODO
    // private static bool completed = false;
 
     void Awake()
     {
+        timestamp = 0;
+
         audio = new AudioFeedback();
 
         dbconnection = new connect();
 
         dictationRecognizer = new DictationRecognizer();
 
-        dictationRecognizer.AutoSilenceTimeoutSeconds = 5;
+        dictationRecognizer.AutoSilenceTimeoutSeconds = 60;
+
+        dictationRecognizer.InitialSilenceTimeoutSeconds = 60;
 
         dictationRecognizer.DictationHypothesis += DictationRecognizer_DictationHypothesis;
 
         dictationRecognizer.DictationResult += DictationRecognizer_DictationResult;
 
-        dictationRecognizer.DictationComplete += DictationRecognizer_DictationComplete;
+        //dictationRecognizer.DictationComplete += DictationRecognizer_DictationComplete;
 
         dictationRecognizer.DictationError += DictationRecognizer_DictationError;
 
@@ -63,16 +77,21 @@ public class SpeechManager : MonoBehaviour
 
     void Update()
     {
-        if (hasRecordingStarted && !Microphone.IsRecording(deviceName) && dictationRecognizer.Status == SpeechSystemStatus.Running)
+        /*remove "hasRecodringStarted" to run test*/
+        if (hasRecordingStarted && current >= 100f && dictationRecognizer.Status == SpeechSystemStatus.Running)
         {
-            
             // Reset the flag now that we're cleaning up the UI.
             hasRecordingStarted = false;
-
+            
+            StopRecording();
             // This acts like pressing the Stop button and sends the message to the Communicator.
             // If the microphone stops as a result of timing out, make sure to manually stop the dictation recognizer.
             // Look at the StopRecording function.
             SendMessage("RecordStop");
+
+            timestamp = 0;
+            current = 0;
+            Destroy(currentLoading);
         }
         if (dictationRecognizer.Status != SpeechSystemStatus.Running)
         {
@@ -83,6 +102,21 @@ public class SpeechManager : MonoBehaviour
             infoText.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f,0.2f,1));
             infoText.transform.LookAt(2f*infoText.transform.position - Camera.main.transform.position);
         }
+
+        if(timestamp != 0)
+        {
+            current += (10 * timestamp);
+            Debug.Log(current);
+            currentLoading.transform.GetChild(0).GetChild(0).GetComponent<Image>().fillAmount = current/100;
+        }
+
+        if(currentLoading != null)
+        {
+            currentLoading.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.7f, 0.5f, 1f));
+            currentLoading.transform.LookAt(2f * currentLoading.transform.position - Camera.main.transform.position);
+            currentLoading.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
+        }
+        
     }
 
     /// <summary>
@@ -91,9 +125,11 @@ public class SpeechManager : MonoBehaviour
     /// <returns>The audio clip recorded from the microphone.</returns>
     public AudioClip StartRecording(GameObject note)
     {
+        currentLoading = Instantiate(loading, Camera.main.transform.position + 1f * Camera.main.transform.forward, Camera.main.transform.localRotation);
         audio.playSound();
+        /*Small text for info
         infoText = Instantiate(text, Camera.main.transform.position, Camera.main.transform.rotation);
-        infoText.GetComponentInChildren<Text>().text = "Click anywhere to stop recording";
+        infoText.GetComponentInChildren<Text>().text = "Click anywhere to stop recording";*/
         TapEvent.speaking = true;
         notepad = note;
         notepad.transform.parent.GetComponentInParent<TapToPlace>().enabled = false;
@@ -103,22 +139,22 @@ public class SpeechManager : MonoBehaviour
 
         // Set the flag that we've started recording.
         hasRecordingStarted = true;
-
+        timestamp = Time.deltaTime;
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
+
     }
 
     /// <summary>
     /// Ends the recording session.
     /// </summary>
+    /// OBS! If running tests disable tap to place
     public static void StopRecording()
     {
-            Destroy(GameObject.FindGameObjectWithTag("info"));
             TapEvent.speaking = false;
             hasRecordingStarted = false;
             if (dictationRecognizer.Status == SpeechSystemStatus.Running)
             {
-                Debug.Log(dictationRecognizer.GetType());
                 dictationRecognizer.Stop();
             }
             dbconnection.editNote(notepad.transform.parent.GetComponent<NoteCommands>().noteId.ToString(), notepad.GetComponentInChildren<Text>().text);
@@ -126,6 +162,9 @@ public class SpeechManager : MonoBehaviour
             notepad.transform.parent.GetComponentInParent<TapToPlace>().enabled = true;
     }
 
+    /// <summary>
+    /// Clears the text on the current note.
+    /// </summary>
     public static void clearText()
     {
         textSoFar.Length = 0;
@@ -158,7 +197,8 @@ public class SpeechManager : MonoBehaviour
     /// Typically, this will simply return "Complete". In this case, we check to see if the recognizer timed out.
     /// </summary>
     /// <param name="cause">An enumerated reason for the session completing.</param>
-    private void DictationRecognizer_DictationComplete(DictationCompletionCause cause)
+    /// GOOOD BYE FOR NOW
+    /*private void DictationRecognizer_DictationComplete(DictationCompletionCause cause)
     {
         // If Timeout occurs, the user has been silent for too long.
         // With dictation, the default timeout after a recognition is 20 seconds.
@@ -169,7 +209,7 @@ public class SpeechManager : MonoBehaviour
             StopRecording();
             SendMessage("ResetAfterTimeout");
         }
-    }
+    }*/
 
     //TODO
     /*private void CheckComplete(DictationCompletionCause cause)

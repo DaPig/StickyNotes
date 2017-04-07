@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 91222e0fee53fc645b7033065a08cefc
+timeCreated: 1491550324
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Manns Bare Hand
+  fontNames:
+  - Manns Bare Hand
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
