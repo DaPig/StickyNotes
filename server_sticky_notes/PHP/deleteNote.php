@@ -1,23 +1,24 @@
 <?php
 
-$servername = ""; // server name
-$server_username = ""; // username for server
-$server_password = ""; // insert server password
-$dbName = ""; // insert database name
+$servername = "libanaden.com.mysql";
+$server_username = "libanaden_com_notes";
+$server_password = "Dreamteam";
+$dbName = "libanaden_com_notes";
+
 
 		$id = $_POST["id"];
-
-
-$conn = new mysqli($servername, $server_username, $server_password, $dbName);
 		
-		if(!$conn){
-			die("connection failed.". mysqli_connect_error());
-		}
-	
-		$sql = "DELETE FROM note WHERE id = $id";
-		$result = mysqli_query($conn, $sql);
-		
-		if(!result) echo "there was an error";
-		else echo "Everything ok.";
-		
+		try {
+		    $conn = new PDO("mysql:host=$servername;dbname=$dbName", $server_username, $server_password);
+		    // set the PDO error mode to exception
+		    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		    echo "Connected successfully"; 
+		    $sql = "DELETE FROM Notes WHERE id = $id";
+		    $conn->exec($sql);
+		    }
+		catch(PDOException $e)
+		    {
+		    echo "Connection failed: " . $e->getMessage();
+		    }
+?>
 ?>

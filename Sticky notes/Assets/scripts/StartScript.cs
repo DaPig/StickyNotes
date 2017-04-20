@@ -72,8 +72,6 @@ public class StartScript : MonoBehaviour {
             yield return new WaitForSeconds(5);
             once = true;
         }
-
-        Debug.Log("yay");
         if (hit)
         {
             Quaternion lockrotation = Camera.main.transform.localRotation;

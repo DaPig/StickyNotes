@@ -1,27 +1,27 @@
 <?php
 
-$servername = ""; // server name
-$server_username = ""; // username for server
-$server_password = ""; // insert server password
-$dbName = ""; // insert database name
+$servername = "libanaden.com.mysql";
+$server_username = "libanaden_com_notes";
+$server_password = "Dreamteam";
+$dbName = "libanaden_com_notes";
 
-
-$conn = new mysqli($servername, $server_username, $server_password, $dbName);
-		
-		if(!$conn){
-			die("connection failed.". mysqli_connect_error());
+		try {
+		    $conn = new PDO("mysql:host=$servername;dbname=$dbName", $server_username, $server_password);
+		    // set the PDO error mode to exception
+		    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		    echo "Connected successfully"; 
+		    $sql = "SELECT * FROM  Notes";
+		    $conn->exec($sql);
+		    $row = array();
+		    while($row = PDO::FETCH_ASSOC){
+		        $rows[] = $row;
+		    }
+		    $notearray = array('Notes' => $rows);
+		    echo json_encode($notearray);
+	    }
+		catch(PDOException $e)
+	    {
+		    echo "Connection failed: " . $e->getMessage();
 		}
-	
-		$sql = "SELECT * FROM  note";
-		$result = mysqli_query($conn, $sql) or die("Error in Selecting " . mysqli_error($conn));
-		
-		$rows = array();
-		while($row = mysqli_fetch_assoc($result))
-		{
-			$rows[] = $row;
-		}
-		
-		$notearray = array('Notes' => $rows);
-		echo json_encode($notearray);
 
 ?>

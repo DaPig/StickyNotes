@@ -44,7 +44,7 @@ public class VoiceCommands : MonoBehaviour
         if (GazeManager.Instance.IsGazingAtObject && !keyboardCreated)
         {
             keyboardCreated = true;
-            KeyBoardOutput.createKeyboard(GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).gameObject);
+            KeyBoardOutput.createKeyboard(GazeManager.Instance.HitObject.transform.GetChild(3).gameObject);
         }
     }
 
@@ -55,10 +55,10 @@ public class VoiceCommands : MonoBehaviour
     {
         if (GazeManager.Instance.IsGazingAtObject)
         {
-            GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text = "";
+            GazeManager.Instance.HitObject.transform.GetChild(3).GetComponentInChildren<Text>().text = "";
         }
-        Debug.Log(GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text);
-        dbconnection.editNote(GazeManager.Instance.HitObject.GetComponentInChildren<NoteCommands>().noteId.ToString(), "");
+        Debug.Log(GazeManager.Instance.HitObject.transform.GetChild(3).GetComponentInChildren<Text>().text);
+        dbconnection.editNote(GazeManager.Instance.HitObject.GetComponent<NoteCommands>().noteId.ToString(), "");
         SpeechManager.clearText();
     }
 
@@ -68,16 +68,17 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void makeNew()
     {
+        int user = UserScript.userId;
         if (hit)
         {
             StartCoroutine(dbconnection.insertString((id) =>
             {
                 Quaternion lockrotation = Camera.main.transform.localRotation;
                 GameObject notepad = Instantiate(Notepad, hitInfo.point + Camera.main.transform.forward * -0.05f , Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                notepad.GetComponentInChildren<NoteCommands>().noteId = Int32.Parse(id);
                 Debug.Log(notepad.name);
+                notepad.GetComponent<NoteCommands>().noteId = Int32.Parse(id);
                 notes.Add(notepad);
-            }, ""));
+            }, "", user));
             StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
         }
         
@@ -94,7 +95,7 @@ public class VoiceCommands : MonoBehaviour
         {
             Destroy(GazeManager.Instance.HitObject.gameObject);
         }
-        dbconnection.deleteNote(GazeManager.Instance.HitObject.GetComponentInChildren<NoteCommands>().noteId.ToString());
+        dbconnection.deleteNote(GazeManager.Instance.HitObject.GetComponent<NoteCommands>().noteId.ToString());
         StartScript.texts[2].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
 
     }
@@ -106,7 +107,7 @@ public class VoiceCommands : MonoBehaviour
     {
         if (GazeManager.Instance.IsGazingAtObject)
         {
-            speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(0).GetChild(0).gameObject);
+            speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(3).gameObject);
         }
         StartScript.texts[0].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
     }
@@ -122,8 +123,8 @@ public class VoiceCommands : MonoBehaviour
             for (int i = 0; i < note.Notes.Count; i++)
             {
                 notepad = Instantiate(Notepad, Camera.main.transform.position + Camera.main.transform.right*i*0.3f + 2f * Camera.main.transform.forward, Camera.main.transform.localRotation) as GameObject;
-                notepad.transform.GetChild(0).GetChild(0).GetComponentInChildren<Text>().text = note.Notes[i].content;
-                notepad.GetComponentInChildren<NoteCommands>().noteId = i + 1;
+                notepad.transform.GetChild(3).GetComponentInChildren<Text>().text = note.Notes[i].content;
+                notepad.GetComponent<NoteCommands>().noteId = i + 1;
             }
         }));
     }
@@ -149,4 +150,11 @@ public class VoiceCommands : MonoBehaviour
     {
         SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
     }
+
+    public void loginUser()
+    {
+        GameObject.Find("UsernameField").GetComponentInChildren<Text>().text = "";
+        speech.StartRecordingLogin(GameObject.Find("UsernameField"));
+    }
+
 }

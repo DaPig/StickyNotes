@@ -6,9 +6,11 @@ using selectnotes;
 
 namespace connectionRoutes
 {
+
+
     public class ConnectionRoutes : MonoBehaviour
     {
-
+        public bool exist;
         private connect dbconnection;
         private select dbselect;
 
@@ -19,16 +21,19 @@ namespace connectionRoutes
             dbselect = new select();
         }
 
-        public void createUser(string user, string pw, string mail)
+        public void createUser(int user)
         {
-            dbconnection.insertUser(user, pw, mail);
+            dbconnection.insertUser(user);
         }
 
-        // Update is called once per frame
-        void Update()
+        public void loginUser(int user)
         {
-
+            StartCoroutine(dbconnection.checkUser((ifExist) =>
+            {
+                exist = ifExist;
+            }, user));
         }
+
     }
 }
 
