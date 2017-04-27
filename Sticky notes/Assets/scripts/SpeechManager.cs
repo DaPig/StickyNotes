@@ -143,7 +143,9 @@ public class SpeechManager : MonoBehaviour
 
         // Set the flag that we've started recording.
         hasRecordingStarted = true;
-        timestamp = Time.deltaTime;
+        Debug.Log(timestamp);
+        timestamp = 0.0165f;
+        Debug.Log(timestamp);
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
     }
@@ -154,15 +156,16 @@ public class SpeechManager : MonoBehaviour
      /// <returns></returns>
     public AudioClip StartRecordingLogin(GameObject note)
     {
+        
         textSoFar.Length = 0;
         TapEvent.speaking = true;
         login = true;
         notepad = note;
+        notepad.GetComponent<Text>().text = "";
         PhraseRecognitionSystem.Shutdown();
         dictationRecognizer.Start();
         // Set the flag that we've started recording.
         hasRecordingStarted = true;
-        timestamp = Time.deltaTime;
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
     }
@@ -204,11 +207,12 @@ public class SpeechManager : MonoBehaviour
     {
         if (login)
         {
-            if (textSoFar.ToString().Contains("one") || textSoFar.ToString().Contains("One"))
+            if (textSoFar.ToString().Contains("one") || textSoFar.ToString().Contains("zero"))
             {
-                textSoFar.Replace("one", "1");               
+                textSoFar.Replace("one", "1");
+                textSoFar.Replace("zero", "0");
             }
-            notepad.GetComponentInChildren<Text>().text = textSoFar.ToString();
+            notepad.GetComponent<Text>().text = textSoFar.ToString();
         }
         else
         {
@@ -223,9 +227,18 @@ public class SpeechManager : MonoBehaviour
     /// <param name="confidence">A representation of how confident (rejected, low, medium, high) the recognizer is of this recognition.</param>
     private void DictationRecognizer_DictationResult(string text, ConfidenceLevel confidence)
     {
-        textSoFar.Append(text);
-        textSoFar.Replace("one", "1");
-        notepad.GetComponentInChildren<Text>().text = textSoFar.ToString() + " ";
+        if (login)
+        {
+            textSoFar.Append(text);
+            textSoFar.Replace("one", "1");
+            textSoFar.Replace("zero", "0");
+            notepad.GetComponent<Text>().text = textSoFar.ToString() + " ";
+        }else
+        {
+            textSoFar.Append(text);
+            notepad.GetComponentInChildren<Text>().text = textSoFar.ToString() + " ";
+        }
+        
     }
 
     /// <summary>
@@ -263,7 +276,15 @@ public class SpeechManager : MonoBehaviour
     /// <param name="hresult">The int representation of the hresult.</param>
     private void DictationRecognizer_DictationError(string error, int hresult)
     {
-        notepad.GetComponentInChildren<Text>().text = error + "\nHRESULT: " + hresult;
+        if (login)
+        {
+            notepad.GetComponent<Text>().text = error + "\nHRESULT: " + hresult;
+        }
+        else
+        {
+            notepad.GetComponentInChildren<Text>().text = error + "\nHRESULT: " + hresult;
+        }
+        
     }
 
     public static string getTextSoFar()
@@ -274,5 +295,15 @@ public class SpeechManager : MonoBehaviour
     public static void setLoginFalse()
     {
         login = false;
+    }
+
+    public static void setLoginTrue()
+    {
+        login = true;
+    }
+
+    public static bool getLogin()
+    {
+        return login;
     }
 }

@@ -63,7 +63,7 @@ GameObject:
   - component: {fileID: 114367562815950580}
   m_Layer: 0
   m_Name: PostIT
-  m_TagString: Untagged
+  m_TagString: PostIT
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -478,6 +478,9 @@ MonoBehaviour:
   PlaceParentOnTap: 0
   ParentGameObjectToPlace: {fileID: 0}
   IsBeingPlaced: 0
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &114660097117285328
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -521,7 +524,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: sad
+  m_Text: 
 --- !u!114 &114974728342932932
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -602,8 +605,8 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1541667819802630}
-  m_LocalRotation: {x: -0, y: -0.7057958, z: -0, w: 0.70841527}
-  m_LocalPosition: {x: 0, y: 0, z: 2.004242}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.05}
   m_Children:
   - {fileID: 4017877134628856}
@@ -612,9 +615,9 @@ RectTransform:
   - {fileID: 224782776033246578}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -89.788, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.02151737, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1000, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}

@@ -12,12 +12,18 @@ public class VoiceCommands : MonoBehaviour
 {
     public GameObject Notepad;
     public GameObject keyboard;
+    public GameObject workspace;
+
     public static bool keyboardCreated = false;
+
     private connect dbconnection;
     private select dbselect;
+
     private SpeechManager speech;
     private AudioSource audio;
+
     public List<GameObject> notes;
+
     public bool hit;
     public RaycastHit hitInfo;
 
@@ -69,20 +75,30 @@ public class VoiceCommands : MonoBehaviour
     public void makeNew()
     {
         int user = UserScript.userId;
-        if (hit)
+       
         {
             StartCoroutine(dbconnection.insertString((id) =>
             {
                 Quaternion lockrotation = Camera.main.transform.localRotation;
-                GameObject notepad = Instantiate(Notepad, hitInfo.point + Camera.main.transform.forward * -0.05f , Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                Debug.Log(notepad.name);
+                GameObject notepad;
+                GameObject workspace = GazeManager.Instance.HitObject.transform.gameObject;
+                if (workspace.tag == "Workspace")
+                {
+                    notepad = Instantiate(Notepad, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
+                    notepad.transform.SetParent(workspace.transform);
+                }
+                else if (hit)
+                {
+                    notepad = Instantiate(Notepad, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                } else
+                {
+                    notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                }
                 notepad.GetComponent<NoteCommands>().noteId = Int32.Parse(id);
                 notes.Add(notepad);
             }, "", user));
             StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
         }
-        
-        //Destroy(StartScript.texts[0]);
     }
 
     /// <summary>
@@ -140,7 +156,7 @@ public class VoiceCommands : MonoBehaviour
         }
         GameObject startTexts = GameObject.Find("StartManager");
         startTexts.GetComponent<StartScript>().Clear();
-        startTexts.GetComponent<StartScript>().Init();
+        startTexts.GetComponent<StartScript>().DoSomething();
     }
 
     /// <summary>
@@ -153,8 +169,32 @@ public class VoiceCommands : MonoBehaviour
 
     public void loginUser()
     {
-        GameObject.Find("UsernameField").GetComponentInChildren<Text>().text = "";
-        speech.StartRecordingLogin(GameObject.Find("UsernameField"));
+        GameObject.Find("UsernameField").transform.GetChild(1).GetComponent<Text>().text = "";
+        speech.StartRecordingLogin(GameObject.Find("UsernameField").transform.GetChild(0).gameObject);
+    }
+
+    public void createWorkspace()
+    {
+        int user = UserScript.userId;
+
+        {
+            /*StartCoroutine(dbconnection.insertString((id) =>
+            {*/
+                Quaternion lockrotation = Camera.main.transform.localRotation;
+                GameObject ws;
+
+            if (hit)
+            {
+                ws = Instantiate(workspace, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            }
+            else
+            {
+                Debug.Log("Mmmmmmm");
+                ws = Instantiate(workspace, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            }
+            /*}, "", user));
+            StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);*/
+        }
     }
 
 }

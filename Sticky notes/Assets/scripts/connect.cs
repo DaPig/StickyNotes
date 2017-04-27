@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using System.Text.RegularExpressions;
 
 namespace conn
 {
@@ -41,19 +42,36 @@ namespace conn
             WWW www = new WWW(editURL, form);
         }
 
-        public void insertUser(int user)
+        public IEnumerator insertUser(System.Action<bool> callback, int user)
         {
-            Debug.Log(user);
             WWWForm form = new WWWForm();
             form.AddField("usernumber", user);
             WWW www = new WWW(createUserURL, form);
+            yield return www;
+            string test;
+            if(www.text.Length > 4)
+            {
+               test = www.text.Remove(4);
+            } else
+            {
+                test = www.text;
+            }
+           
+          
+            if (test == "true")
+            {
+                callback(true);
+            } else
+            {
+                callback(false);
+            }
         }
 
         public IEnumerator checkUser(System.Action<bool> callback, int user)
         {
             WWWForm form = new WWWForm();
             form.AddField("usernumber", user);
-            WWW www = new WWW(checkUserURL, form);
+            WWW www = new WWW(checkUserURL, form);       
             yield return www;
             if (www.text == "true")
             {
