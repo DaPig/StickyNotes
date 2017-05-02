@@ -16,7 +16,10 @@ namespace conn
         string checkUserURL = "http://libanaden.com/checkUser.php";
         public string id;
 
-
+        /// <summary>
+        /// Inserts a note into the database using WWW form.
+        /// sends a callback with the note id.
+        /// </summary>
         public IEnumerator insertString(System.Action<string> callback, string note, int user)
         {
             WWWForm form = new WWWForm();
@@ -27,14 +30,20 @@ namespace conn
             callback(www.text);
         }
 
+        /// <summary>
+        /// Removes a note from the database.
+        /// </summary>
         public void deleteNote(string id)
         {
             WWWForm form = new WWWForm();
             form.AddField("id", id);
             WWW www = new WWW(deleteURL, form);
         }
-		
-		public void editNote(string id, string newContent)
+
+        /// <summary>
+        /// Edits the text that is written on the note.
+        /// </summary>
+        public void editNote(string id, string newContent)
         {
             WWWForm form = new WWWForm();
             form.AddField("id", id);
@@ -42,23 +51,16 @@ namespace conn
             WWW www = new WWW(editURL, form);
         }
 
+        /// <summary>
+        /// Insert our created user into the database.
+        /// </summary>
         public IEnumerator insertUser(System.Action<bool> callback, int user)
         {
             WWWForm form = new WWWForm();
             form.AddField("usernumber", user);
             WWW www = new WWW(createUserURL, form);
             yield return www;
-            string test;
-            if(www.text.Length > 4)
-            {
-               test = www.text.Remove(4);
-            } else
-            {
-                test = www.text;
-            }
-           
-          
-            if (test == "true")
+            if(www.text.Contains("true"))
             {
                 callback(true);
             } else
@@ -67,6 +69,9 @@ namespace conn
             }
         }
 
+        /// <summary>
+        /// Checks if the user is in the database or not.
+        /// </summary>
         public IEnumerator checkUser(System.Action<bool> callback, int user)
         {
             WWWForm form = new WWWForm();
@@ -80,6 +85,11 @@ namespace conn
             {
                 callback(false);
             }
+        }
+
+        public void insertWorkspace()
+        {
+
         }
 
     }

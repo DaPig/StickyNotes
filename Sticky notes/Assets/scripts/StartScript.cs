@@ -58,6 +58,7 @@ public class StartScript : MonoBehaviour {
                 SpeechManager.setLoginFalse();
                 DoSomething();
             }
+            //Changes the fill ammount of the loading bar
             current += (19 * timestamp);
             bar.transform.GetChild(1).GetComponent<Image>().fillAmount = current / 100;
             bar.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.25f, 1f));
@@ -102,6 +103,7 @@ public class StartScript : MonoBehaviour {
         Debug.Log(current);
         if (current >= 100f)
         {
+            //Wait for loading to finish then instantiate tutorials depending on what we are looking at
             if (hit && !isLoading)
             {
                 Quaternion lockrotation = Camera.main.transform.localRotation;

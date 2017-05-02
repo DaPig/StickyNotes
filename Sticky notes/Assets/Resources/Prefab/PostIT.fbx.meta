@@ -1,28 +1,21 @@
 fileFormatVersion: 2
-guid: 884f65876b26fe34bb00fc0037e93884
-timeCreated: 1492509991
+guid: fb38fad28a3d9b14a83e02236e2a8c58
+timeCreated: 1493656151
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
-    100000: pCube1
-    100002: pCube2
-    100004: pCube3
+    100000: Camera
+    100002: Cube.001
+    100004: Lamp
     100006: //RootNode
-    400000: pCube1
-    400002: pCube2
-    400004: pCube3
+    400000: Camera
+    400002: Cube.001
+    400004: Lamp
     400006: //RootNode
-    2300000: pCube1
-    2300002: pCube2
-    2300004: pCube3
-    3300000: pCube1
-    3300002: pCube2
-    3300004: pCube3
-    4300000: pCube1
-    4300002: pCube2
-    4300004: pCube3
-    9500000: //RootNode
+    2300000: Cube.001
+    3300000: Cube.001
+    4300000: Cube.001
   materials:
     importMaterials: 1
     materialName: 0
@@ -85,7 +78,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

@@ -129,6 +129,7 @@ public class SpeechManager : MonoBehaviour
     /// <returns>The audio clip recorded from the microphone.</returns>
     public AudioClip StartRecording(GameObject note)
     {
+        //Instantiate the loading circle and play the audio queue
         currentLoading = Instantiate(loading, Camera.main.transform.position + 1f * Camera.main.transform.forward, Camera.main.transform.localRotation);
         audio.playSound();
         /*Small text for info
@@ -137,15 +138,16 @@ public class SpeechManager : MonoBehaviour
         TapEvent.speaking = true;
         notepad = note;
         notepad.GetComponentInParent<TapToPlace>().enabled = false;
-        PhraseRecognitionSystem.Shutdown();
 
+        //Shutdown the Phrase recognizer and start dictation
+        PhraseRecognitionSystem.Shutdown();
         dictationRecognizer.Start();
 
         // Set the flag that we've started recording.
         hasRecordingStarted = true;
-        Debug.Log(timestamp);
+
+        //Used to fill the loading circle
         timestamp = 0.0165f;
-        Debug.Log(timestamp);
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
     }
@@ -157,15 +159,20 @@ public class SpeechManager : MonoBehaviour
     public AudioClip StartRecordingLogin(GameObject note)
     {
         
+        //Initial setup to record and write to note
         textSoFar.Length = 0;
         TapEvent.speaking = true;
         login = true;
         notepad = note;
         notepad.GetComponent<Text>().text = "";
+
+        //Shutdown the Phrase recognizer and start dictation
         PhraseRecognitionSystem.Shutdown();
         dictationRecognizer.Start();
+
         // Set the flag that we've started recording.
         hasRecordingStarted = true;
+
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
     }
@@ -246,7 +253,6 @@ public class SpeechManager : MonoBehaviour
     /// Typically, this will simply return "Complete". In this case, we check to see if the recognizer timed out.
     /// </summary>
     /// <param name="cause">An enumerated reason for the session completing.</param>
-    /// GOOOD BYE FOR NOW
     /*private void DictationRecognizer_DictationComplete(DictationCompletionCause cause)
     {
         // If Timeout occurs, the user has been silent for too long.
