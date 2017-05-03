@@ -30,8 +30,8 @@ public class StartScript : MonoBehaviour {
 
         timestamp = 0.0165f;
         bar = Instantiate(loadingBar, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
-        userID = Instantiate(userIDPref, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
-        userID.GetComponentInChildren<Text>().text = "User: " + UserScript.userId;
+        /*userID = Instantiate(userIDPref, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
+        userID.GetComponentInChildren<Text>().text = "User: " + UserScript.userId;*/
         isLoading = true;
 
         if(UserScript.userId != -1)
@@ -54,6 +54,10 @@ public class StartScript : MonoBehaviour {
             if (bar.transform.GetChild(1).GetComponent<Image>().fillAmount >= 1)
             {
                 Destroy(bar);
+                if(welcomeText != null)
+                {
+                    Destroy(welcomeText);
+                }
                 isLoading = false;
                 SpeechManager.setLoginFalse();
                 DoSomething();
@@ -69,17 +73,20 @@ public class StartScript : MonoBehaviour {
                 welcomeText.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 1f));
                 welcomeText.transform.LookAt(2f * welcomeText.transform.position - Camera.main.transform.position);
                 welcomeText.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
+                Debug.Log(welcomeText.name);
             }
+            
         }
         
         hit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 20f, SpatialMappingManager.Instance.LayerMask);
 
-        if (UserScript.userId != -1)
+        /*if (UserScript.userId != -1)
         {
             userID.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.46f, 0.57f, 1f));
             userID.transform.LookAt(2f * userID.transform.position - Camera.main.transform.position);
             userID.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
-        }
+        }*/
+        
     }
 
     /// <summary>

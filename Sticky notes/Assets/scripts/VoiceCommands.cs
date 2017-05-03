@@ -27,6 +27,9 @@ public class VoiceCommands : MonoBehaviour
     public bool hit;
     public RaycastHit hitInfo;
 
+    protected SpatialMappingManager spatialMappingManager;
+    public LayerMask myLayerMask;
+
     // Use this for initialization
     public void Start()
     {
@@ -35,6 +38,7 @@ public class VoiceCommands : MonoBehaviour
         dbselect = new select();
         speech = GetComponent < SpeechManager> ();
         notes = new List<GameObject>();
+
     }
 
     void Update()
@@ -81,19 +85,42 @@ public class VoiceCommands : MonoBehaviour
             {
                 Quaternion lockrotation = Camera.main.transform.localRotation;
                 GameObject notepad;
-                GameObject workspace = GazeManager.Instance.HitObject.transform.gameObject;
+                Debug.Log("Okek");
+                GameObject workspace = null;
+                /*Vector3 headPosition = Camera.main.transform.position;
+                Vector3 gazeDirection = Camera.main.transform.forward;
+
+                RaycastHit hitInfoTwo;
+                if (!Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask) && !Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 20f, SpatialMappingManager.Instance.LayerMask))
+                {
+                    workspace = GazeManager.Instance.HitObject.transform.gameObject;
+                    Debug.Log("Okekdkfjhlkfdshgl");
+                    if (workspace.tag == "Workspace")
+                    {
+                        notepad = Instantiate(Notepad, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
+                        notepad.transform.SetParent(workspace.transform);
+                        Debug.Log(notepad.name + "first");
+                    }
+                }*/
+
+
                 if (workspace.tag == "Workspace")
                 {
                     notepad = Instantiate(Notepad, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
                     notepad.transform.SetParent(workspace.transform);
+                    Debug.Log(notepad.name + "first");
                 }
                 else if (hit)
                 {
                     notepad = Instantiate(Notepad, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                } else
+                    Debug.Log(notepad.name + "second");
+                }
+                else
                 {
                     notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
                 }
+                //notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                Debug.Log(notepad.name + "last");
                 notepad.GetComponent<NoteCommands>().noteId = Int32.Parse(id);
                 notes.Add(notepad);
             }, "", user));

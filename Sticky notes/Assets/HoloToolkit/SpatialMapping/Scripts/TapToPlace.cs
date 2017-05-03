@@ -51,7 +51,6 @@ namespace HoloToolkit.Unity.SpatialMapping
 
         private RaycastHit hitInfo;
 
-
         protected virtual void Start()
         {
             // Make sure we have all the components in the scene we need.
@@ -69,7 +68,7 @@ namespace HoloToolkit.Unity.SpatialMapping
 
             if (anchorManager != null && spatialMappingManager != null)
             {
-               //anchorManager.AttachAnchor(gameObject, SavedAnchorFriendlyName);
+                //anchorManager.AttachAnchor(gameObject, SavedAnchorFriendlyName);
             }
             else
             {
@@ -123,7 +122,7 @@ namespace HoloToolkit.Unity.SpatialMapping
                         gameObject.transform.rotation = toQuat;
                     }
                 }
-                else if(hitInfoTwo.point.z == 0)
+                else if (hitInfoTwo.point.z == 0)
                 {
                     if (PlaceParentOnTap)
                     {
@@ -140,7 +139,7 @@ namespace HoloToolkit.Unity.SpatialMapping
                     }
                 }
                 else if (hitInfo.point.z < hitInfoTwo.point.z)
-                {  
+                {
                     if (PlaceParentOnTap)
                     {
                         // Place the parent object as well but keep the focus on the current game object
@@ -173,7 +172,6 @@ namespace HoloToolkit.Unity.SpatialMapping
                 }
             }
         }
-
         public virtual void OnInputClicked(InputEventData eventData)
         {
             // On each tap gesture, toggle whether the user is in placing mode.
@@ -183,48 +181,43 @@ namespace HoloToolkit.Unity.SpatialMapping
             // If the user is in placing mode, display the spatial mapping mesh.
             if (IsBeingPlaced)
             {
-                
+
                 Debug.Log("DUH HELLOOOOOOO");
                 spatialMappingManager.DrawVisualMeshes = true;
 
                 Debug.Log(gameObject.name + " : Removing existing world anchor if any.");
                 notepad = GazeManager.Instance.HitObject.transform.gameObject;
-                if(notepad.tag == "PostIT")
+                if (notepad.tag == "PostIT")
                 {
-                    if(notepad.transform.parent != null)
+                    if (notepad.transform.parent != null)
                     {
                         if (notepad.transform.parent.tag == "Workspace")
                         {
                             notepad.transform.SetParent(null);
                         }
-                    } 
+                    }
                 }
-                
+
                 //anchorManager.RemoveAnchor(gameObject);
             }
             // If the user is not in placing mode, hide the spatial mapping mesh.
             else
             {
-                notepad = GazeManager.Instance.HitObject.transform.gameObject;
-                Debug.Log(notepad.transform.parent.name);
+                spatialMappingManager.DrawVisualMeshes = false;
+                notepad = GazeManager.Instance.HitObject.gameObject;
                 if (notepad.tag == "PostIT")
                 {
                     if (notepad.transform.parent == null)
                     {
                         if (hitInfo.transform.gameObject.tag == "Workspace")
                         {
-                            notepad.transform.SetParent(hitInfo.transform.gameObject.transform);
+                            //notepad.transform.SetParent(hitInfo.transform.gameObject.transform, false);
+                            Debug.Log(notepad.transform.parent.name);
                         }
                     }
                 }
-               
-                Debug.Log(notepad.transform.parent.name);
-                spatialMappingManager.DrawVisualMeshes = false;
-                // Add world anchor when object placement is done.
-                //anchorManager.AttachAnchor(gameObject, SavedAnchorFriendlyName);
             }
         }
-
         private void DetermineParent()
         {
             if (ParentGameObjectToPlace == null)
