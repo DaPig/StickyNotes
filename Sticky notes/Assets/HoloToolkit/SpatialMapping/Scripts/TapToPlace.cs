@@ -107,6 +107,8 @@ namespace HoloToolkit.Unity.SpatialMapping
                 toQuat.x = 0;
                 toQuat.z = 0;
 
+                //Checks which layer we are hitting and moves the note accordingly
+                //No spatial mapping available, position the note ontop of a workspace
                 if (hitInfo.point.z == 0)
                 {
                     if (PlaceParentOnTap)
@@ -118,10 +120,12 @@ namespace HoloToolkit.Unity.SpatialMapping
                     }
                     else
                     {
+                        
                         gameObject.transform.position = hitInfoTwo.point + Camera.main.transform.forward * -0.05f;
                         gameObject.transform.rotation = toQuat;
                     }
                 }
+                //No workspace available, position the note on the spatial mapping
                 else if (hitInfoTwo.point.z == 0)
                 {
                     if (PlaceParentOnTap)
@@ -134,10 +138,12 @@ namespace HoloToolkit.Unity.SpatialMapping
 
                     else
                     {
+                        
                         gameObject.transform.position = hitInfo.point + Camera.main.transform.forward * -0.05f;
                         gameObject.transform.rotation = toQuat;
                     }
                 }
+                //The spatial mapping is closer than the workspace, move the note ontop of the spatial mapping
                 else if (hitInfo.point.z < hitInfoTwo.point.z)
                 {
                     if (PlaceParentOnTap)
@@ -154,6 +160,7 @@ namespace HoloToolkit.Unity.SpatialMapping
                         gameObject.transform.rotation = toQuat;
                     }
                 }
+                //A workspace is closer than the spatial mapping, move the note ontop of the workspace
                 else if (hitInfo.point.z >= hitInfoTwo.point.z)
                 {
                     if (PlaceParentOnTap)
@@ -187,7 +194,8 @@ namespace HoloToolkit.Unity.SpatialMapping
 
                 Debug.Log(gameObject.name + " : Removing existing world anchor if any.");
                 notepad = GazeManager.Instance.HitObject.transform.gameObject;
-                if (notepad.tag == "PostIT")
+                //if the notepad gameobject actually is a PostIT, and it has a parent workspace, remove that parent
+                if(notepad.tag == "PostIT")
                 {
                     if (notepad.transform.parent != null)
                     {
@@ -203,8 +211,8 @@ namespace HoloToolkit.Unity.SpatialMapping
             // If the user is not in placing mode, hide the spatial mapping mesh.
             else
             {
-                spatialMappingManager.DrawVisualMeshes = false;
-                notepad = GazeManager.Instance.HitObject.gameObject;
+                notepad = GazeManager.Instance.HitObject.transform.gameObject;
+                //If the notepad gameobject actually is a PostIT, and we are looking at a workspace, make that workspace the parent of the note
                 if (notepad.tag == "PostIT")
                 {
                     if (notepad.transform.parent == null)
@@ -216,6 +224,9 @@ namespace HoloToolkit.Unity.SpatialMapping
                         }
                     }
                 }
+                spatialMappingManager.DrawVisualMeshes = false;
+                // Add world anchor when object placement is done.
+                //anchorManager.AttachAnchor(gameObject, SavedAnchorFriendlyName);
             }
         }
         private void DetermineParent()

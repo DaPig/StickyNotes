@@ -12,7 +12,7 @@ public class VoiceCommands : MonoBehaviour
 {
     public GameObject Notepad;
     public GameObject keyboard;
-    public GameObject workspace;
+    public GameObject WorkspacePrefab;
 
     public static bool keyboardCreated = false;
 
@@ -85,6 +85,7 @@ public class VoiceCommands : MonoBehaviour
             {
                 Quaternion lockrotation = Camera.main.transform.localRotation;
                 GameObject notepad;
+<<<<<<< HEAD
                 Debug.Log("Okek");
                 GameObject workspace = null;
                 /*Vector3 headPosition = Camera.main.transform.position;
@@ -104,8 +105,18 @@ public class VoiceCommands : MonoBehaviour
                 }*/
 
 
+=======
+                GameObject workspace = null;
+                if (GazeManager.Instance.HitObject != null)
+                {
+                    workspace = GazeManager.Instance.HitObject.transform.gameObject;
+                }
+                
+                //Checks what we are looking at and decides where to instantiate the note
+>>>>>>> ec87a92e191e695de25366c9be1acf56d8d24c5b
                 if (workspace.tag == "Workspace")
                 {
+         
                     notepad = Instantiate(Notepad, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
                     notepad.transform.SetParent(workspace.transform);
                     Debug.Log(notepad.name + "first");
@@ -117,7 +128,7 @@ public class VoiceCommands : MonoBehaviour
                 }
                 else
                 {
-                    notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x-90, lockrotation.eulerAngles.y, -90)) as GameObject;
                 }
                 //notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
                 Debug.Log(notepad.name + "last");
@@ -150,7 +161,7 @@ public class VoiceCommands : MonoBehaviour
     {
         if (GazeManager.Instance.IsGazingAtObject)
         {
-            speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(3).gameObject);
+             speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(1).gameObject);
         }
         StartScript.texts[0].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
     }
@@ -200,6 +211,9 @@ public class VoiceCommands : MonoBehaviour
         speech.StartRecordingLogin(GameObject.Find("UsernameField").transform.GetChild(0).gameObject);
     }
 
+    /// <summary>
+    /// Creates a workspace where you are looking.
+    /// </summary>
     public void createWorkspace()
     {
         int user = UserScript.userId;
@@ -210,18 +224,27 @@ public class VoiceCommands : MonoBehaviour
                 Quaternion lockrotation = Camera.main.transform.localRotation;
                 GameObject ws;
 
+            //Checks if we are hitting a mapped surface or not
             if (hit)
             {
-                ws = Instantiate(workspace, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                ws = Instantiate(WorkspacePrefab, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             }
             else
             {
                 Debug.Log("Mmmmmmm");
-                ws = Instantiate(workspace, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                ws = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             }
             /*}, "", user));
             StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);*/
         }
+    }
+
+    /// <summary>
+    /// Saves the workspace in the database.
+    /// </summary>
+    public void saveWorkspace()
+    {
+
     }
 
 }
