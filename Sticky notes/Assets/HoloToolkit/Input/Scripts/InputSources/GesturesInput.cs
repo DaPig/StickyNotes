@@ -30,6 +30,10 @@ namespace HoloToolkit.Unity.InputModule
             }
         }
 
+        public bool IsNavigating { get; private set; }
+
+        public Vector3 NavigationPosition { get; private set; }
+
         private void Awake()
         {
             gestureRecognizer = new GestureRecognizer();
@@ -145,24 +149,30 @@ namespace HoloToolkit.Unity.InputModule
 
         private void OnNavigationStartedEvent(InteractionSourceKind source, Vector3 normalizedOffset, Ray headray)
         {
+            IsNavigating = true;
+            NavigationPosition = normalizedOffset;
             NavigationEventArgs args = new NavigationEventArgs(this, 0, normalizedOffset);
             RaiseNavigationStartedEvent(args);
         }
 
         private void OnNavigationUpdatedEvent(InteractionSourceKind source, Vector3 normalizedOffset, Ray headray)
         {
+            IsNavigating = true;
+            NavigationPosition = normalizedOffset;
             NavigationEventArgs args = new NavigationEventArgs(this, 0, normalizedOffset);
             RaiseNavigationUpdatedEvent(args);
         }
 
         private void OnNavigationCompletedEvent(InteractionSourceKind source, Vector3 normalizedOffset, Ray headray)
         {
+            IsNavigating = false;
             NavigationEventArgs args = new NavigationEventArgs(this, 0, normalizedOffset);
             RaiseNavigationCompletedEvent(args);
         }
 
         private void OnNavigationCanceledEvent(InteractionSourceKind source, Vector3 normalizedOffset, Ray headray)
         {
+            IsNavigating = false;
             NavigationEventArgs args = new NavigationEventArgs(this, 0, normalizedOffset);
             RaiseNavigationCanceledEvent(args);
         }

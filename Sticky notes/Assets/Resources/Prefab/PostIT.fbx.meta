@@ -1,20 +1,26 @@
 fileFormatVersion: 2
 guid: fb38fad28a3d9b14a83e02236e2a8c58
-timeCreated: 1493656151
+timeCreated: 1493799031
 licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: Camera
-    100002: Cube.001
-    100004: Lamp
-    100006: //RootNode
+    100002: Camera.001
+    100004: Cube.001
+    100006: Lamp
+    100008: Lamp.001
+    100010: //RootNode
     400000: Camera
-    400002: Cube.001
-    400004: Lamp
-    400006: //RootNode
+    400002: Camera.001
+    400004: Cube.001
+    400006: Lamp
+    400008: Lamp.001
+    400010: //RootNode
     2300000: Cube.001
+    2300002: //RootNode
     3300000: Cube.001
+    3300002: //RootNode
     4300000: Cube.001
   materials:
     importMaterials: 1

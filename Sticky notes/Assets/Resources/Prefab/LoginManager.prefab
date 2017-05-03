@@ -1124,7 +1124,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67bdff9a98f03d2439ad162786698d34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Notepad: {fileID: 1412664505275914, guid: 3b6a438b056888c488e297a6991e0334, type: 2}
-  keyboard: {fileID: 1002140743540880, guid: 9d7c8e2e0e8880e4ea74a487357e6723, type: 2}
+  NotepadPrefab: {fileID: 1604951435582784, guid: 345795da055338c43bba7e9b70a58ad0,
+    type: 2}
+  keyboardPrefab: {fileID: 1002140743540880, guid: 9d7c8e2e0e8880e4ea74a487357e6723,
+    type: 2}
+  WorkspacePrefab: {fileID: 1149516931170468, guid: 4819b9621251fd144ac16a17f3cce5f3,
+    type: 2}
   notes: []
   hit: 0
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0

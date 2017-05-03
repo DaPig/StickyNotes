@@ -51,6 +51,8 @@ namespace HoloToolkit.Unity.SpatialMapping
 
         private RaycastHit hitInfo;
 
+        private bool workspaceHit;
+
         protected virtual void Start()
         {
             // Make sure we have all the components in the scene we need.
@@ -99,6 +101,7 @@ namespace HoloToolkit.Unity.SpatialMapping
 
                 RaycastHit hitInfoTwo;
 
+                workspaceHit = Physics.Raycast(headPosition, gazeDirection, out hitInfo, 30.0f, myLayerMask);
                 Physics.Raycast(headPosition, gazeDirection, out hitInfo, 30.0f, myLayerMask);
                 Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, spatialMappingManager.LayerMask);
 
@@ -144,7 +147,7 @@ namespace HoloToolkit.Unity.SpatialMapping
                     }
                 }
                 //The spatial mapping is closer than the workspace, move the note ontop of the spatial mapping
-                else if (hitInfo.point.z < hitInfoTwo.point.z)
+                else if (hitInfo.point.z <= hitInfoTwo.point.z)
                 {
                     if (PlaceParentOnTap)
                     {
@@ -161,7 +164,7 @@ namespace HoloToolkit.Unity.SpatialMapping
                     }
                 }
                 //A workspace is closer than the spatial mapping, move the note ontop of the workspace
-                else if (hitInfo.point.z >= hitInfoTwo.point.z)
+                else if (hitInfo.point.z > hitInfoTwo.point.z)
                 {
                     if (PlaceParentOnTap)
                     {
@@ -188,11 +191,9 @@ namespace HoloToolkit.Unity.SpatialMapping
             // If the user is in placing mode, display the spatial mapping mesh.
             if (IsBeingPlaced)
             {
-
-                Debug.Log("DUH HELLOOOOOOO");
                 spatialMappingManager.DrawVisualMeshes = true;
 
-                Debug.Log(gameObject.name + " : Removing existing world anchor if any.");
+                //Debug.Log(gameObject.name + " : Removing existing world anchor if any.");
                 notepad = GazeManager.Instance.HitObject.transform.gameObject;
                 //if the notepad gameobject actually is a PostIT, and it has a parent workspace, remove that parent
                 if(notepad.tag == "PostIT")
@@ -213,13 +214,20 @@ namespace HoloToolkit.Unity.SpatialMapping
             {
                 notepad = GazeManager.Instance.HitObject.transform.gameObject;
                 //If the notepad gameobject actually is a PostIT, and we are looking at a workspace, make that workspace the parent of the note
+                Debug.Log("HEEEJ");
                 if (notepad.tag == "PostIT")
                 {
+                    Debug.Log("Då");
                     if (notepad.transform.parent == null)
                     {
-                        if (hitInfo.transform.gameObject.tag == "Workspace")
+                        Debug.Log("På");
+                        if (workspaceHit)
                         {
-                            //notepad.transform.SetParent(hitInfo.transform.gameObject.transform, false);
+                            Debug.Log("dig");
+                            notepad.transform.SetParent(hitInfo.transform.gameObject.transform);
+                            notepad.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
+                            notepad.transform.localRotation = Quaternion.identity;
+                            notepad.transform.localScale = new Vector3(10, 10, 0.1f);
                             Debug.Log(notepad.transform.parent.name);
                         }
                     }
