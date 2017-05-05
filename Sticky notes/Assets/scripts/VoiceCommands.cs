@@ -13,6 +13,10 @@ public class VoiceCommands : MonoBehaviour
     public GameObject NotepadPrefab;
     public GameObject keyboardPrefab;
     public GameObject WorkspacePrefab;
+    public GameObject HeaderPrefab;
+
+    private GameObject resize;
+    private GameObject adjust;
 
     public static bool keyboardCreated = false;
 
@@ -95,7 +99,7 @@ public class VoiceCommands : MonoBehaviour
 
                     if (workspace.tag == "Workspace")
                     {
-                        notepad = Instantiate(NotepadPrefab, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
+                        notepad = Instantiate(NotepadPrefab, GazeManager.Instance.HitPosition, workspace.transform.rotation) as GameObject;
                         notepad.transform.SetParent(workspace.transform);
                     }
                 }
@@ -192,8 +196,6 @@ public class VoiceCommands : MonoBehaviour
     public void createWorkspace()
     {
         int user = UserScript.userId;
-
-        {
             /*StartCoroutine(dbconnection.insertString((id) =>
             {*/
                 Quaternion lockrotation = Camera.main.transform.localRotation;
@@ -206,12 +208,14 @@ public class VoiceCommands : MonoBehaviour
             }
             else
             {
-                Debug.Log("Mmmmmmm");
                 ws = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             }
-            /*}, "", user));
-            StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);*/
-        }
+        /*}, "", user));
+        StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);*/
+        adjust = ws.transform.GetChild(1).gameObject;
+        resize = ws.transform.GetChild(0).gameObject;
+        adjust.SetActive(false);
+        resize.SetActive(false);
     }
 
     /// <summary>
@@ -220,6 +224,46 @@ public class VoiceCommands : MonoBehaviour
     public void saveWorkspace()
     {
 
+    }
+
+    public void enableAdjustButtons()
+    {
+        adjust.SetActive(true);
+        resize.SetActive(true);
+    }
+
+    public void disableAdjustButtons()
+    {
+        adjust.SetActive(false);
+        resize.SetActive(false);
+    }
+
+    public void createHeader()
+    {
+        GameObject workspace;
+        GameObject header;
+        Vector3 headPosition = Camera.main.transform.position;
+        Vector3 gazeDirection = Camera.main.transform.forward;
+        RaycastHit hitInfoTwo;
+        if (Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask))
+        {
+            workspace = GazeManager.Instance.HitObject.gameObject;
+
+            if (workspace.tag == "Workspace")
+            {
+                header = Instantiate(HeaderPrefab, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
+                header.transform.SetParent(workspace.transform);
+            }
+        }
+    }
+
+    public void deleteHeader()
+    {
+        Debug.Log("in delete" + GazeManager.Instance.HitObject.tag);
+        if(GazeManager.Instance.HitObject.tag == "Header")
+        {
+            Destroy(GazeManager.Instance.HitObject);
+        }
     }
 
 }

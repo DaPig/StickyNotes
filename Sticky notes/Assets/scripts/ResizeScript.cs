@@ -1,12 +1,4 @@
 ﻿using UnityEngine;
-using System;
-using HoloToolkit.Unity.InputModule;
-using UnityEngine.UI;
-using conn;
-using selectnotes;
-using System.Collections.Generic;
-using UnityEngine.SceneManagement;
-using HoloToolkit.Unity.SpatialMapping;
 using HoloToolkit.Unity.InputModule;
 
 /// <summary>
@@ -16,7 +8,7 @@ using HoloToolkit.Unity.InputModule;
 public class ResizeScript : MonoBehaviour
 {
     [Tooltip("Rotation max speed controls amount of rotation.")]
-    public float RotationSensitivity = 2.5f;
+    public float RotationSensitivity = 0.1f;
 
     private Vector3 manipulationPreviousPosition;
 
@@ -25,38 +17,45 @@ public class ResizeScript : MonoBehaviour
 
     private GesturesInput gesture;
     private RectTransform size;
+    private BoxCollider box;
 
     void Start()
     {
         size = this.transform.parent.parent.GetComponent<RectTransform>();
         gesture = GameObject.Find("InputManager").GetComponent<GesturesInput>();
+        box = this.transform.parent.parent.GetComponent<BoxCollider>();
     }
 
     void Update()
     {
-        PerformRotation();
+        if (gesture.IsNavigating)
+        {
+            PerformRotation();
+        } 
     }
 
     private void PerformRotation()
     {
-        
-        if (gesture.IsNavigating)
-        {
+        Debug.Log(GazeManager.Instance.HitObject.name);
+        if(GazeManager.Instance.HitObject.tag == "Workspace" || GazeManager.Instance.HitObject.tag == "ResizeButton") {
             Debug.Log(size.rect.height);
             rotationFactorX = gesture.NavigationPosition.x * RotationSensitivity;
             rotationFactorY = gesture.NavigationPosition.y * RotationSensitivity;
             if (size.rect.width <= 50)
             {
-                Debug.Log("widht 50");
-                size.sizeDelta = new Vector2(size.rect.width, size.rect.height + rotationFactorY * -1);
-            } else if (size.rect.height <= 50)
+                size.sizeDelta = new Vector2(50.1f, size.rect.height + rotationFactorY * -1);
+                box.size = new Vector3(50.1f, size.rect.height + rotationFactorY * -1, 0.01f);
+            }
+            else if (size.rect.height <= 50)
             {
                 Debug.Log("height 50");
-                size.sizeDelta = new Vector2(size.rect.width + rotationFactorX, size.rect.height);
-            } else
+                size.sizeDelta = new Vector2(size.rect.width + rotationFactorX, 50.1f);
+                box.size = new Vector3(size.rect.width + rotationFactorX, 50.1f, 0.01f);
+            }
+            else
             {
-                Debug.Log("NONE");
                 size.sizeDelta = new Vector2(size.rect.width + rotationFactorX, size.rect.height + rotationFactorY * -1);
+                box.size = new Vector3(size.rect.width + rotationFactorX, size.rect.height + rotationFactorY * -1, 0.01f);
             }
         }
     }

@@ -29,11 +29,11 @@ namespace HoloToolkit.Unity.InputModule
                         SupportedInputEvents.Navigation;
             }
         }
-
+        
         public bool IsNavigating { get; private set; }
 
         public Vector3 NavigationPosition { get; private set; }
-
+        
         private void Awake()
         {
             gestureRecognizer = new GestureRecognizer();
@@ -146,7 +146,7 @@ namespace HoloToolkit.Unity.InputModule
             ManipulationEventArgs args = new ManipulationEventArgs(this, 0, cumulativeDelta);
             RaiseManipulationCanceledEvent(args);
         }
-
+        
         private void OnNavigationStartedEvent(InteractionSourceKind source, Vector3 normalizedOffset, Ray headray)
         {
             IsNavigating = true;
@@ -176,7 +176,7 @@ namespace HoloToolkit.Unity.InputModule
             NavigationEventArgs args = new NavigationEventArgs(this, 0, normalizedOffset);
             RaiseNavigationCanceledEvent(args);
         }
-
+        
         public override bool TryGetPosition(uint sourceId, out Vector3 position)
         {
             position = Vector3.zero;

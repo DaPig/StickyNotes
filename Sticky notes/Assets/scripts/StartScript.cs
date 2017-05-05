@@ -81,7 +81,8 @@ public class StartScript : MonoBehaviour {
         
         hit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 20f, SpatialMappingManager.Instance.LayerMask);
 
-        /*if (UserScript.userId != -1)
+        /*PROOOOOOOOOOOBLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+        if (UserScript.userId != -1)
         {
             userID.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.46f, 0.57f, 1f));
             userID.transform.LookAt(2f * userID.transform.position - Camera.main.transform.position);

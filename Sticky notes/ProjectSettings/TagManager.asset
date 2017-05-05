@@ -10,6 +10,8 @@ TagManager:
   - info
   - Workspace
   - PostIT
+  - ResizeButton
+  - Header
   layers:
   - Default
   - TransparentFX
