@@ -266,4 +266,13 @@ public class VoiceCommands : MonoBehaviour
         }
     }
 
+
+    public void editHeader()
+    {
+        if (GazeManager.Instance.HitObject.tag == "Header")
+        {
+            speech.StartRecordingHeader(GazeManager.Instance.HitObject.transform.GetChild(0).gameObject);
+        }
+    }
+
 }

@@ -108,7 +108,7 @@ public class SpeechManager : MonoBehaviour
             }
             if (timestamp != 0)
             {
-                current += (10 * timestamp);
+                current += (5 * timestamp);
                 currentLoading.transform.GetChild(0).GetChild(0).GetComponent<Image>().fillAmount = current / 100;
             }
 
@@ -147,7 +147,7 @@ public class SpeechManager : MonoBehaviour
         hasRecordingStarted = true;
 
         //Used to fill the loading circle
-        timestamp = 0.0165f;
+        timestamp = 0.0333f;
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
     }
@@ -164,6 +164,25 @@ public class SpeechManager : MonoBehaviour
         TapEvent.speaking = true;
         login = true;
         notepad = note;
+        notepad.GetComponent<Text>().text = "";
+
+        //Shutdown the Phrase recognizer and start dictation
+        PhraseRecognitionSystem.Shutdown();
+        dictationRecognizer.Start();
+
+        // Set the flag that we've started recording.
+        hasRecordingStarted = true;
+
+        // Start recording from the microphone for 10 seconds.
+        return Microphone.Start(deviceName, false, messageLength, samplingRate);
+    }
+
+    public AudioClip StartRecordingHeader(GameObject header)
+    {
+        textSoFar.Length = 0;
+        TapEvent.speaking = true;
+        login = true;
+        notepad = header;
         notepad.GetComponent<Text>().text = "";
 
         //Shutdown the Phrase recognizer and start dictation
