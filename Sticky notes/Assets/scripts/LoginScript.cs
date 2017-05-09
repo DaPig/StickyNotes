@@ -86,13 +86,16 @@ public class LoginScript : MonoBehaviour
         //Check if the user exists or not, if yes log the user in.
         StartCoroutine(dbconnection.checkUser((ifExist) =>
         {
+            Debug.Log("hadhadhadhahd");
             if(ifExist) {
                 error.SetActive(false);
                 UserScript.setUser(Convert.ToInt32(user));
                 SceneManager.LoadScene("App", LoadSceneMode.Single);
             } else
             {
-                error.GetComponentInChildren<Text>().text = "The user pin you entered does not exist";
+                error.SetActive(true);
+                error.GetComponentInChildren<Text>().text = "The user pin you entered does not exist!";
+                Debug.Log(error.GetComponentInChildren<Text>().text);
             }
             
         }, Convert.ToInt32(user)));

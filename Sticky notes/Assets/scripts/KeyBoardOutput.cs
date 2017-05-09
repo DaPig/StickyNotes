@@ -33,7 +33,7 @@ public class KeyBoardOutput : MonoBehaviour {
         keyboardText.GetComponentInChildren<Text>().text = notepad.GetComponent<Text>().text + cursor;
     }
     
-    //Used to register the cicks of letters, symbols and space.
+    //Used to register the clicks of letters, symbols and space.
     //Gets the text in the text field and adds the text of the button to it.
     public void OnClick () {
         Text Letter = GetComponentInChildren<Text>();

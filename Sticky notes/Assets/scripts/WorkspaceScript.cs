@@ -8,6 +8,7 @@ public class WorkspaceScript : MonoBehaviour {
 
     public GameObject field;
     private GameObject thingy;
+    public int id;
 	// Use this for initialization
 	void Start () {
 		

@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 223348834427679552}
   - component: {fileID: 114718471660887792}
   - component: {fileID: 65573139074582236}
+  - component: {fileID: 114408191134752788}
   m_Layer: 8
   m_Name: Workspace
   m_TagString: Workspace
@@ -248,6 +249,19 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114408191134752788
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1149516931170468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a33e16c52991d6f4d8befb9ac3433378, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  field: {fileID: 0}
+  id: 0
 --- !u!114 &114584537308064860
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -473,7 +487,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 2.7000008, y: -6.2}
+  m_AnchoredPosition: {x: 0, y: -6.2}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224987645058906146

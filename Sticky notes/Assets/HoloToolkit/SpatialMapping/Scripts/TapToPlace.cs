@@ -55,6 +55,8 @@ namespace HoloToolkit.Unity.SpatialMapping
 
         private int count = 0;
 
+        private bool isHeader = false;
+
         protected virtual void Start()
         {
             // Make sure we have all the components in the scene we need.
@@ -113,7 +115,7 @@ namespace HoloToolkit.Unity.SpatialMapping
 
                 //Checks which layer we are hitting and moves the note accordingly
                 //No spatial mapping available, position the note ontop of a workspace
-                if (hitInfo.point.z == 0)
+                if (hitInfo.point.z == 0 && !isHeader)
                 {
                     if (PlaceParentOnTap)
                     {
@@ -164,7 +166,7 @@ namespace HoloToolkit.Unity.SpatialMapping
                     }
                 }
                 //A workspace is closer than the spatial mapping, move the note ontop of the workspace
-                else if (hitInfo.point.z > hitInfoTwo.point.z)
+                else if (hitInfo.point.z > hitInfoTwo.point.z && !isHeader)
                 {
                     if (PlaceParentOnTap)
                     {
@@ -185,32 +187,43 @@ namespace HoloToolkit.Unity.SpatialMapping
         public virtual void OnInputClicked(InputEventData eventData)
         {
             // On each tap gesture, toggle whether the user is in placing mode.
-            if(count == 0)
+            if (count == 0)
             {
                 IsBeingPlaced = !IsBeingPlaced;
-            }else if(count == 1)
+            }
+            else if (count == 1)
             {
                 IsBeingPlaced = !IsBeingPlaced;
             }
             IsBeingPlaced = !IsBeingPlaced;
-            GameObject notepad;
+            GameObject gazeObject;
             Debug.Log(IsBeingPlaced);
             // If the user is in placing mode, display the spatial mapping mesh.
             if (IsBeingPlaced)
             {
-                
+
                 spatialMappingManager.DrawVisualMeshes = true;
-                Debug.Log("Whut tha hell");
                 //Debug.Log(gameObject.name + " : Removing existing world anchor if any.");
-                notepad = GazeManager.Instance.HitObject.transform.gameObject;
+                gazeObject = GazeManager.Instance.HitObject.transform.gameObject;
                 //if the notepad gameobject actually is a PostIT, and it has a parent workspace, remove that parent
-                if(notepad.tag == "PostIT")
+                if (gazeObject.tag == "PostIT")
                 {
-                    if (notepad.transform.parent != null)
+                    if (gazeObject.transform.parent != null)
                     {
-                        if (notepad.transform.parent.tag == "Workspace")
+                        if (gazeObject.transform.parent.tag == "Workspace")
                         {
-                            notepad.transform.SetParent(null);
+                            gazeObject.transform.SetParent(null);
+                        }
+                    }
+                }
+                else if (gazeObject.tag == "Header")
+                {
+                    isHeader = true;
+                    if (gazeObject.transform.parent != null)
+                    {
+                        if (gazeObject.transform.parent.tag == "Workspace")
+                        {
+                            gazeObject.transform.SetParent(null);
                         }
                     }
                 }
@@ -220,26 +233,39 @@ namespace HoloToolkit.Unity.SpatialMapping
             // If the user is not in placing mode, hide the spatial mapping mesh.
             else
             {
-                notepad = GazeManager.Instance.HitObject.transform.gameObject;
+                gazeObject = GazeManager.Instance.HitObject.transform.gameObject;
                 //If the notepad gameobject actually is a PostIT, and we are looking at a workspace, make that workspace the parent of the note
-                if (notepad.tag == "PostIT")
+                if (gazeObject.tag == "PostIT")
                 {
-                    if (notepad.transform.parent == null)
+                    if (gazeObject.transform.parent == null)
                     {
                         if (workspaceHit)
                         {
-                            notepad.transform.SetParent(hitInfo.transform.gameObject.transform);
-                            notepad.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
-                            notepad.transform.localRotation = Quaternion.identity;
-                            notepad.transform.localScale = new Vector3(10, 10, 0.1f);
-                            Debug.Log(notepad.transform.parent.name);
+                            gazeObject.transform.SetParent(hitInfo.transform.gameObject.transform);
+                            gazeObject.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
+                            gazeObject.transform.localRotation = Quaternion.identity;
+                            gazeObject.transform.localScale = new Vector3(10, 10, 0.1f);
                         }
                     }
                 }
-                spatialMappingManager.DrawVisualMeshes = false;
-                // Add world anchor when object placement is done.
-                //anchorManager.AttachAnchor(gameObject, SavedAnchorFriendlyName);
-                count--;
+                else if (gazeObject.tag == "Header")
+                {
+                    isHeader = false;
+                    if (gazeObject.transform.parent == null)
+                    {
+                        if (workspaceHit)
+                        {
+                            gazeObject.transform.SetParent(hitInfo.transform.gameObject.transform);
+                            gazeObject.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
+                            gazeObject.transform.localRotation = Quaternion.identity;
+                            gazeObject.transform.localScale = new Vector3(1, 1, 0);
+                        }
+                    }
+                    spatialMappingManager.DrawVisualMeshes = false;
+                    // Add world anchor when object placement is done.
+                    //anchorManager.AttachAnchor(gameObject, SavedAnchorFriendlyName);
+                    count--;
+                }
             }
         }
         private void DetermineParent()

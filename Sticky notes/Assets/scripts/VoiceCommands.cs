@@ -27,6 +27,7 @@ public class VoiceCommands : MonoBehaviour
     private AudioSource audio;
 
     public List<GameObject> notes;
+    public List<GameObject> headers;
 
     public bool hit;
     public RaycastHit hitInfo;
@@ -195,11 +196,10 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void createWorkspace()
     {
-        int user = UserScript.userId;
-            /*StartCoroutine(dbconnection.insertString((id) =>
-            {*/
-                Quaternion lockrotation = Camera.main.transform.localRotation;
-                GameObject ws;
+        StartCoroutine(dbconnection.insertWorkspace((id) =>
+        {
+            Quaternion lockrotation = Camera.main.transform.localRotation;
+            GameObject ws;
 
             //Checks if we are hitting a mapped surface or not
             if (hit)
@@ -210,12 +210,16 @@ public class VoiceCommands : MonoBehaviour
             {
                 ws = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             }
-        /*}, "", user));
-        StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);*/
-        adjust = ws.transform.GetChild(1).gameObject;
-        resize = ws.transform.GetChild(0).gameObject;
-        adjust.SetActive(false);
-        resize.SetActive(false);
+
+            adjust = ws.transform.GetChild(1).gameObject;
+            resize = ws.transform.GetChild(0).gameObject;
+            adjust.SetActive(false);
+            resize.SetActive(false);
+
+            ws.GetComponent<WorkspaceScript>().id = Int32.Parse(id);
+        }));
+        
+        
     }
 
     /// <summary>
@@ -223,7 +227,40 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void saveWorkspace()
     {
+        GameObject ws = null;
+        Vector3 headPosition = Camera.main.transform.position;
+        Vector3 gazeDirection = Camera.main.transform.forward;
+        RaycastHit hitInfoTwo;
+        if (Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask))
+        {
+            ws = hitInfoTwo.transform.gameObject;
+        }
+        Debug.Log(ws.tag);
+        if(ws.tag == "Workspace")
+        {
+            foreach (GameObject note in notes)
+            {
+                if (ws.GetComponent<WorkspaceScript>().id == note.transform.parent.GetComponent<WorkspaceScript>().id)
+                {
+                    Debug.Log(note.GetComponent<NoteCommands>().noteId);
+                    Debug.Log(note.transform.parent.GetComponent<WorkspaceScript>().id);
+                    StartCoroutine(dbconnection.saveWs(note.GetComponent<NoteCommands>().noteId, note.transform.parent.GetComponent<WorkspaceScript>().id));
+                }
+            }
 
+            foreach (GameObject header in headers)
+            {
+                if (header.transform.parent.GetComponent<WorkspaceScript>().id == ws.GetComponent<WorkspaceScript>().id)
+                {
+                    Debug.Log(header.GetComponentInChildren<Text>().text);
+                    string pos = header.transform.localPosition.x + "," + header.transform.localPosition.y;
+
+                    Debug.Log(pos);
+                    dbconnection.saveHeader(header.transform.parent.GetComponent<WorkspaceScript>().id, header.GetComponentInChildren<Text>().text, pos);
+                }
+            }
+        }
+        
     }
 
     public void enableAdjustButtons()
@@ -242,6 +279,7 @@ public class VoiceCommands : MonoBehaviour
     {
         GameObject workspace;
         GameObject header;
+        Quaternion lockrotation = Camera.main.transform.localRotation;
         Vector3 headPosition = Camera.main.transform.position;
         Vector3 gazeDirection = Camera.main.transform.forward;
         RaycastHit hitInfoTwo;
@@ -253,6 +291,10 @@ public class VoiceCommands : MonoBehaviour
             {
                 header = Instantiate(HeaderPrefab, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
                 header.transform.SetParent(workspace.transform);
+                headers.Add(header);
+                /*header.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
+                header.transform.localRotation = Quaternion.identity;
+                header.transform.localScale = new Vector3(1, 1,0);*/
             }
         }
     }

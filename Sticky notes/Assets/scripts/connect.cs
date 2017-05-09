@@ -14,6 +14,9 @@ namespace conn
         string editURL = "http://libanaden.com/editnote.php";
         string createUserURL = "http://libanaden.com/CreateUser.php";
         string checkUserURL = "http://libanaden.com/checkUser.php";
+        string insertWorkspaceURL = "http://libanaden.com/insertWorkspace.php";
+        string saveWorkspaceURL = "http://libanaden.com/saveWorkspace.php";
+        string saveHeaderURL = "http://libanaden.com/insertHeader.php";
         public string id;
 
         /// <summary>
@@ -87,11 +90,33 @@ namespace conn
             }
         }
 
-        public void insertWorkspace()
+        public IEnumerator insertWorkspace(System.Action<string> callback)
         {
+            WWWForm form = new WWWForm();
+            WWW www = new WWW(insertWorkspaceURL, form);
+            yield return www;
+            Debug.Log(www.text);
+            callback(www.text);
+        }
+
+        public IEnumerator saveWs(int note_id, int ws_id)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("note_id", note_id);
+            form.AddField("ws_id", ws_id);
+            WWW www = new WWW(saveWorkspaceURL, form);
+            yield return www;
+            Debug.Log(www.text);
 
         }
 
+        public void saveHeader(int ws_id, string header_text, string position)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("ws_id", ws_id);
+            form.AddField("header_text", header_text);
+            form.AddField("position", position);
+            WWW www = new WWW(saveHeaderURL, form);
+        }
     }
-
 }

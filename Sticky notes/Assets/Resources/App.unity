@@ -303,6 +303,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f122ca4ae6b527e4798205becf9a0550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1473241248 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114221983260728432, guid: 3418407910415e44ca5e666938c18c72,
+    type: 2}
+  m_PrefabInternal: {fileID: 1920034747}
+  m_Script: {fileID: 11500000, guid: 67bdff9a98f03d2439ad162786698d34, type: 3}
 --- !u!1001 &1920034747
 Prefab:
   m_ObjectHideFlags: 0
@@ -310,6 +316,16 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.size
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[14].Response.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4873253090907854, guid: 3418407910415e44ca5e666938c18c72, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -341,6 +357,42 @@ Prefab:
     - target: {fileID: 4873253090907854, guid: 3418407910415e44ca5e666938c18c72, type: 2}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[14].Keyword
+      value: Save workspace
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[14].Response.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1473241248}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[14].Response.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: saveWorkspace
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[14].Response.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[14].Response.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[14].Response.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[14].Response.m_TypeName
+      value: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3418407910415e44ca5e666938c18c72, type: 2}
