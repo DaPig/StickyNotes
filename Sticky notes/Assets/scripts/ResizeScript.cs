@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using HoloToolkit.Unity.InputModule;
+using conn;
 
 /// <summary>
 /// GestureAction performs custom actions based on
@@ -15,23 +16,53 @@ public class ResizeScript : MonoBehaviour
     private float rotationFactorX;
     private float rotationFactorY;
 
-    private GesturesInput gesture;
+    private InputManager gesture;
     private RectTransform size;
     private BoxCollider box;
 
+    private connect dbconnection;
+
+    private bool startedResizeing;
+    public LayerMask myLayerMask;
+
     void Start()
     {
-        size = this.transform.parent.parent.GetComponent<RectTransform>();
-        gesture = GameObject.Find("InputManager").GetComponent<GesturesInput>();
-        box = this.transform.parent.parent.GetComponent<BoxCollider>();
+        dbconnection = new connect();
+        gesture = GameObject.Find("InputManager").GetComponent<InputManager>();
+        startedResizeing = false;
     }
 
     void Update()
     {
         if (gesture.IsNavigating)
         {
+            if(!startedResizeing)
+            {
+                Vector3 headPosition = Camera.main.transform.position;
+                Vector3 gazeDirection = Camera.main.transform.forward;
+                RaycastHit hitInfo;
+                Physics.Raycast(headPosition, gazeDirection, out hitInfo, 30.0f, myLayerMask);
+                if(hitInfo.collider.gameObject.tag == "Workspace")
+                {
+                    size = hitInfo.collider.gameObject.GetComponent<RectTransform>();
+                    box = hitInfo.collider.gameObject.GetComponent<BoxCollider>();
+                } else if (hitInfo.collider.gameObject.name == "ResizeButton")
+                {
+                    size = hitInfo.collider.gameObject.transform.parent.parent.GetComponent<RectTransform>();
+                    box = hitInfo.collider.gameObject.transform.parent.parent.GetComponent<BoxCollider>();
+                }
+                
+                startedResizeing = true;
+            }
             PerformRotation();
-        } 
+            dbconnection.saveWorkspaceSize(this.transform.parent.parent.GetComponent<WorkspaceScript>().id, this.transform.parent.parent.GetComponent<RectTransform>().rect.width.ToString(), this.transform.parent.parent.GetComponent<RectTransform>().rect.height.ToString());
+        } else
+        {
+            if(startedResizeing == true)
+            {
+                startedResizeing = false;
+            }
+        }
     }
 
     private void PerformRotation()

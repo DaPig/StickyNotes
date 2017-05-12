@@ -3,6 +3,7 @@
 
 using HoloToolkit.Unity.InputModule;
 using UnityEngine;
+using conn;
 
 namespace HoloToolkit.Unity.SpatialMapping
 {
@@ -57,8 +58,13 @@ namespace HoloToolkit.Unity.SpatialMapping
 
         private bool isHeader = false;
 
+        private connect dbconnection;
+
+        GameObject gazeObject;
+
         protected virtual void Start()
         {
+            dbconnection = new connect();
             // Make sure we have all the components in the scene we need.
             anchorManager = WorldAnchorManager.Instance;
             if (anchorManager == null)
@@ -91,6 +97,8 @@ namespace HoloToolkit.Unity.SpatialMapping
 
                 DetermineParent();
             }
+
+            
         }
 
         protected virtual void Update()
@@ -184,20 +192,12 @@ namespace HoloToolkit.Unity.SpatialMapping
                 }
             }
         }
+
         public virtual void OnInputClicked(InputEventData eventData)
         {
             // On each tap gesture, toggle whether the user is in placing mode.
-            if (count == 0)
-            {
-                IsBeingPlaced = !IsBeingPlaced;
-            }
-            else if (count == 1)
-            {
-                IsBeingPlaced = !IsBeingPlaced;
-            }
             IsBeingPlaced = !IsBeingPlaced;
-            GameObject gazeObject;
-            Debug.Log(IsBeingPlaced);
+            
             // If the user is in placing mode, display the spatial mapping mesh.
             if (IsBeingPlaced)
             {
@@ -245,8 +245,16 @@ namespace HoloToolkit.Unity.SpatialMapping
                             gazeObject.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
                             gazeObject.transform.localRotation = Quaternion.identity;
                             gazeObject.transform.localScale = new Vector3(10, 10, 0.1f);
+
+                            dbconnection.saveWs(gazeObject.GetComponent<NoteCommands>().noteId, gazeObject.transform.parent.GetComponent<WorkspaceScript>().id);
+                            savePos();
+                        }
+                        else
+                        {
+                            StartCoroutine(dbconnection.removeNoteRelation(gazeObject.GetComponent<NoteCommands>().noteId));
                         }
                     }
+                         
                 }
                 else if (gazeObject.tag == "Header")
                 {
@@ -259,15 +267,18 @@ namespace HoloToolkit.Unity.SpatialMapping
                             gazeObject.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
                             gazeObject.transform.localRotation = Quaternion.identity;
                             gazeObject.transform.localScale = new Vector3(1, 1, 0);
+                            savePos();
                         }
                     }
-                    spatialMappingManager.DrawVisualMeshes = false;
+                   
                     // Add world anchor when object placement is done.
                     //anchorManager.AttachAnchor(gameObject, SavedAnchorFriendlyName);
                     count--;
                 }
+                spatialMappingManager.DrawVisualMeshes = false;
             }
         }
+
         private void DetermineParent()
         {
             if (ParentGameObjectToPlace == null)
@@ -282,6 +293,20 @@ namespace HoloToolkit.Unity.SpatialMapping
                     Debug.LogError("No parent specified. Using immediate parent instead: " + gameObject.transform.parent.gameObject.name);
                     ParentGameObjectToPlace = gameObject.transform.parent.gameObject;
                 }
+            }
+        }
+
+        private void savePos()
+        {
+
+            if(gazeObject.tag == "Header")
+            {
+                string pos = gazeObject.transform.localPosition.x + "," + gazeObject.transform.localPosition.y;
+                StartCoroutine(dbconnection.saveHeaderPos(gazeObject.GetComponent<HeaderScript>().headerId, pos));
+            } else
+            {
+                string pos = gazeObject.transform.localPosition.x + "," + gazeObject.transform.localPosition.y;
+                dbconnection.saveNotePos(gazeObject.GetComponent<NoteCommands>().noteId, pos);
             }
         }
     }

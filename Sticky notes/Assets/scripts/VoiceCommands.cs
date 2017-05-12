@@ -4,6 +4,7 @@ using HoloToolkit.Unity.InputModule;
 using UnityEngine.UI;
 using conn;
 using selectnotes;
+using getWs;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using HoloToolkit.Unity.SpatialMapping;
@@ -22,6 +23,7 @@ public class VoiceCommands : MonoBehaviour
 
     private connect dbconnection;
     private select dbselect;
+    private getWorkspace dbGetWs;
 
     private SpeechManager speech;
     private AudioSource audio;
@@ -41,6 +43,7 @@ public class VoiceCommands : MonoBehaviour
         audio = gameObject.GetComponent<AudioSource>();
         dbconnection = new connect();
         dbselect = new select();
+        dbGetWs = new getWorkspace();
         speech = GetComponent < SpeechManager> ();
         notes = new List<GameObject>();
 
@@ -84,41 +87,49 @@ public class VoiceCommands : MonoBehaviour
     public void makeNew()
     {
         int user = UserScript.userId;
-       
+        StartCoroutine(dbconnection.insertNote((id) =>
         {
-            StartCoroutine(dbconnection.insertString((id) =>
+            Quaternion lockrotation = Camera.main.transform.localRotation;
+            GameObject notepad = null;
+            GameObject workspace = null;
+            Vector3 headPosition = Camera.main.transform.position;
+            Vector3 gazeDirection = Camera.main.transform.forward;
+            RaycastHit hitInfoTwo;
+            if (Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask))
             {
-                Quaternion lockrotation = Camera.main.transform.localRotation;
-                GameObject notepad = null;
-                GameObject workspace = null;
-                Vector3 headPosition = Camera.main.transform.position;
-                Vector3 gazeDirection = Camera.main.transform.forward;
-                RaycastHit hitInfoTwo;
-                if (Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask))
-                {
-                    workspace = GazeManager.Instance.HitObject.gameObject;
+                workspace = GazeManager.Instance.HitObject.gameObject;
 
-                    if (workspace.tag == "Workspace")
-                    {
-                        notepad = Instantiate(NotepadPrefab, GazeManager.Instance.HitPosition, workspace.transform.rotation) as GameObject;
-                        notepad.transform.SetParent(workspace.transform);
-                    }
-                }
-                else if (hit)
+                if (workspace.tag == "Workspace")
                 {
-                    notepad = Instantiate(NotepadPrefab, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    notepad = Instantiate(NotepadPrefab, GazeManager.Instance.HitPosition, workspace.transform.rotation) as GameObject;
+                    notepad.transform.SetParent(workspace.transform);
                 }
-                else
+            }
+            else if (hit)
+            {
+                notepad = Instantiate(NotepadPrefab, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            }
+            else
+            {
+                notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            }
+            //notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            notepad.GetComponent<NoteCommands>().noteId = Int32.Parse(id);
+            notes.Add(notepad);
+            if(workspace != null)
+            {
+                if (notepad.transform.parent.tag == "Workspace")
                 {
-                    notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    string pos = notepad.transform.localPosition.x + "," + notepad.transform.localPosition.y;
+                    dbconnection.saveNotePos(Int32.Parse(id), pos);
                 }
-                //notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                notepad.GetComponent<NoteCommands>().noteId = Int32.Parse(id);
-                notes.Add(notepad);
-            }, "", user));
-            StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
-        }
+            }
+            
+            
+        }, "", user));
+        StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
     }
+ 
 
     /// <summary>
     /// Removes the note you are currently gazing at.
@@ -141,7 +152,7 @@ public class VoiceCommands : MonoBehaviour
     {
         if (GazeManager.Instance.IsGazingAtObject)
         {
-             speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(1).gameObject);
+            speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(1).gameObject);
             StartScript.texts[0].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
         }
     }
@@ -157,7 +168,7 @@ public class VoiceCommands : MonoBehaviour
             for (int i = 0; i < note.Notes.Count; i++)
             {
                 notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right*i*0.3f + 2f * Camera.main.transform.forward, Camera.main.transform.localRotation) as GameObject;
-                notepad.transform.GetChild(3).GetComponentInChildren<Text>().text = note.Notes[i].content;
+                notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = note.Notes[i].content;
                 notepad.GetComponent<NoteCommands>().noteId = i + 1;
             }
         }));
@@ -196,10 +207,12 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void createWorkspace()
     {
+        GameObject ws;
         StartCoroutine(dbconnection.insertWorkspace((id) =>
         {
+
             Quaternion lockrotation = Camera.main.transform.localRotation;
-            GameObject ws;
+            
 
             //Checks if we are hitting a mapped surface or not
             if (hit)
@@ -207,7 +220,7 @@ public class VoiceCommands : MonoBehaviour
                 ws = Instantiate(WorkspacePrefab, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             }
             else
-            {
+            { 
                 ws = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             }
 
@@ -217,9 +230,9 @@ public class VoiceCommands : MonoBehaviour
             resize.SetActive(false);
 
             ws.GetComponent<WorkspaceScript>().id = Int32.Parse(id);
-        }));
-        
-        
+            Debug.Log(ws.transform.GetComponent<RectTransform>().rect.width);
+            dbconnection.saveWorkspaceSize(Int32.Parse(id), ws.transform.GetComponent<RectTransform>().rect.width.ToString(), ws.transform.GetComponent<RectTransform>().rect.height.ToString());
+        }));        
     }
 
     /// <summary>
@@ -242,9 +255,7 @@ public class VoiceCommands : MonoBehaviour
             {
                 if (ws.GetComponent<WorkspaceScript>().id == note.transform.parent.GetComponent<WorkspaceScript>().id)
                 {
-                    Debug.Log(note.GetComponent<NoteCommands>().noteId);
-                    Debug.Log(note.transform.parent.GetComponent<WorkspaceScript>().id);
-                    StartCoroutine(dbconnection.saveWs(note.GetComponent<NoteCommands>().noteId, note.transform.parent.GetComponent<WorkspaceScript>().id));
+                    dbconnection.saveWs(note.GetComponent<NoteCommands>().noteId, note.transform.parent.GetComponent<WorkspaceScript>().id);
                 }
             }
 
@@ -252,11 +263,8 @@ public class VoiceCommands : MonoBehaviour
             {
                 if (header.transform.parent.GetComponent<WorkspaceScript>().id == ws.GetComponent<WorkspaceScript>().id)
                 {
-                    Debug.Log(header.GetComponentInChildren<Text>().text);
                     string pos = header.transform.localPosition.x + "," + header.transform.localPosition.y;
 
-                    Debug.Log(pos);
-                    dbconnection.saveHeader(header.transform.parent.GetComponent<WorkspaceScript>().id, header.GetComponentInChildren<Text>().text, pos);
                 }
             }
         }
@@ -289,12 +297,16 @@ public class VoiceCommands : MonoBehaviour
 
             if (workspace.tag == "Workspace")
             {
+                
                 header = Instantiate(HeaderPrefab, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
                 header.transform.SetParent(workspace.transform);
                 headers.Add(header);
-                /*header.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
-                header.transform.localRotation = Quaternion.identity;
-                header.transform.localScale = new Vector3(1, 1,0);*/
+                string pos = header.transform.localPosition.x + "," + header.transform.localPosition.y;
+                StartCoroutine(dbconnection.saveHeader((id) =>
+                {
+                    header.GetComponent<HeaderScript>().headerId = Int32.Parse(id);
+                },workspace.GetComponent<WorkspaceScript>().id, header.GetComponentInChildren<Text>().text, pos ));
+                
             }
         }
     }
@@ -314,7 +326,49 @@ public class VoiceCommands : MonoBehaviour
         if (GazeManager.Instance.HitObject.tag == "Header")
         {
             speech.StartRecordingHeader(GazeManager.Instance.HitObject.transform.GetChild(0).gameObject);
+
         }
+    }
+
+    public void getWorkspace()
+    {
+        //StartCoroutine(dbconnection.getWorkspace(68));
+       StartCoroutine(dbGetWs.getWS((workspace, headerlist) => {
+           Quaternion lockrotation = Camera.main.transform.localRotation;
+           GameObject workspaceObject = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+           float width = float.Parse(workspace.Workspace[0].width);
+           float height = float.Parse(workspace.Workspace[0].height);
+           workspaceObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+           workspaceObject.GetComponent<WorkspaceScript>().id = workspace.Workspace[0].ws_id;
+           GameObject notepad;
+           GameObject header;
+           for (int i = 0; i < workspace.Workspace.Count; i++)
+           {
+               string[] pos = workspace.Workspace[i].Note_pos.Split(',');
+               notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+               notepad.transform.SetParent(workspaceObject.transform);
+               float xPos = float.Parse(pos[0]);
+               float yPos = float.Parse(pos[1]);
+               Vector3 localpos = new Vector3(xPos, yPos , 0);
+               notepad.transform.localPosition = localpos;
+               notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
+               notepad.GetComponent<NoteCommands>().noteId = workspace.Workspace[i].note_id;
+           }
+           Debug.Log(headerlist.headerList);
+           for (int i = 0; i < headerlist.headerList.Count; i++)
+           {
+               string[] pos = headerlist.headerList[i].Header_pos.Split(',');
+               header = Instantiate(HeaderPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+               header.transform.SetParent(workspaceObject.transform);
+               float xPos = float.Parse(pos[0]);
+               float yPos = float.Parse(pos[1]);
+               Vector3 localpos = new Vector3(xPos, yPos, 0);
+               header.transform.localPosition = localpos;
+               header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
+               header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
+           }
+       }, 1));
+
     }
 
 }

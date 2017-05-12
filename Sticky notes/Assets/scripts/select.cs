@@ -22,9 +22,13 @@ namespace selectnotes
 
     public class Note
     {
-        public string id;
+        public int id;
         public string content;
-        public string user;
+        public string position;
+        public int type;
+        public int user_id;
+        
+        
 
         public static Note CreateFromJSON(string jsonString)
         {
@@ -41,10 +45,11 @@ namespace selectnotes
         public IEnumerator Start1(System.Action<Notelist> callback)
         {
             WWW www = new WWW(url);
+
             yield return www;
             if (www.error == null)
             {
-                Notelist list = Notelist.CreateFromJSON(www.text);
+                Notelist list = Notelist.CreateFromJSON("{\"Notes\":" + www.text + "}");
                 callback(list);
             }
 

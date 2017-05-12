@@ -1,6 +1,9 @@
 ﻿using System.Collections;
+using System.Text.RegularExpressions;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using conn;
 using HoloToolkit.Unity.SpatialMapping;
 using HoloToolkit.Unity.InputModule;
 
@@ -9,15 +12,32 @@ public class WorkspaceScript : MonoBehaviour {
     public GameObject field;
     private GameObject thingy;
     public int id;
+    private connect dbconnection;
+
+    public static bool isWaiting = false;
 	// Use this for initialization
 	void Start () {
-		
+        dbconnection = new connect();
+        InvokeRepeating("updateSize", 0f, 1f);
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		
-	}
+	void Update()
+    {
+       
+    }
+
+    private void updateSize()
+    {
+        StartCoroutine(dbconnection.updateWorkspaceSize((size) => {
+            Regex reg = new Regex(@"\d");
+            if(reg.IsMatch(size))
+            {
+                string[] sizes = size.Split(',');
+                this.GetComponent<RectTransform>().sizeDelta = new Vector2(float.Parse(sizes[0]), float.Parse(sizes[1]));
+            }     
+        }, id));
+    }
 
     public void addField()
     {

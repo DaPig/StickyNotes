@@ -288,6 +288,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1061712582 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1073881161640376, guid: 3418407910415e44ca5e666938c18c72,
+    type: 2}
+  m_PrefabInternal: {fileID: 1920034747}
+--- !u!114 &1061712584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1061712582}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b160d197a8ca1894796ae263bafec0ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1329991291 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 130246, guid: b3d0fa1645b2b1a4398aca020e52925e, type: 2}
@@ -319,11 +335,16 @@ Prefab:
     - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
         type: 2}
       propertyPath: KeywordsAndResponses.Array.size
-      value: 15
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
         type: 2}
       propertyPath: KeywordsAndResponses.Array.data[14].Response.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[15].Response.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4873253090907854, guid: 3418407910415e44ca5e666938c18c72, type: 2}
@@ -394,7 +415,45 @@ Prefab:
       value: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
         PublicKeyToken=null
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[15].Keyword
+      value: Get workspace
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[15].Response.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1473241248}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[15].Response.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: getWorkspace
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[15].Response.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[15].Response.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[15].Response.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114541155181869830, guid: 3418407910415e44ca5e666938c18c72,
+        type: 2}
+      propertyPath: KeywordsAndResponses.Array.data[15].Response.m_TypeName
+      value: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114271796479330112, guid: 3418407910415e44ca5e666938c18c72, type: 2}
+    - {fileID: 114193939822982814, guid: 3418407910415e44ca5e666938c18c72, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 3418407910415e44ca5e666938c18c72, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &2023077520

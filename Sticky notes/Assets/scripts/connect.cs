@@ -17,13 +17,22 @@ namespace conn
         string insertWorkspaceURL = "http://libanaden.com/insertWorkspace.php";
         string saveWorkspaceURL = "http://libanaden.com/saveWorkspace.php";
         string saveHeaderURL = "http://libanaden.com/insertHeader.php";
+        string saveHeaderPosURL = "http://libanaden.com/insertHeaderPos.php";
+        string saveHeaderTextURL = "http://libanaden.com/insertHeaderText.php";
+        string saveNotePosURL = "http://libanaden.com/insertNotePos.php";
+        string removeNoteRelationURL = "http://libanaden.com/removeConsistsOf.php";
+        string getWorkspaceURL = "http://libanaden.com/getWorkspace.php";
+        string setWorkspaceSizeURL = "http://libanaden.com/insertWorkspaceSize.php";
+        string checkWorkspaceSizeURL = "http://libanaden.com/checkWorkspaceSize.php";
         public string id;
+
+        public static bool sizeUpdate = false;
 
         /// <summary>
         /// Inserts a note into the database using WWW form.
         /// sends a callback with the note id.
         /// </summary>
-        public IEnumerator insertString(System.Action<string> callback, string note, int user)
+        public IEnumerator insertNote(System.Action<string> callback, string note, int user)
         {
             WWWForm form = new WWWForm();
             form.AddField("user_id", user);
@@ -31,6 +40,14 @@ namespace conn
             WWW www = new WWW(insertURL, form);
             yield return www;
             callback(www.text);
+        }
+
+        public void saveNotePos(int id, string position)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("id", id);
+            form.AddField("position", position);
+            WWW www = new WWW(saveNotePosURL, form);
         }
 
         /// <summary>
@@ -95,28 +112,83 @@ namespace conn
             WWWForm form = new WWWForm();
             WWW www = new WWW(insertWorkspaceURL, form);
             yield return www;
-            Debug.Log(www.text);
             callback(www.text);
         }
 
-        public IEnumerator saveWs(int note_id, int ws_id)
+        public void saveWs(int note_id, int ws_id)
         {
             WWWForm form = new WWWForm();
             form.AddField("note_id", note_id);
             form.AddField("ws_id", ws_id);
             WWW www = new WWW(saveWorkspaceURL, form);
-            yield return www;
-            Debug.Log(www.text);
-
         }
 
-        public void saveHeader(int ws_id, string header_text, string position)
+        public IEnumerator saveHeader(System.Action<string> callback, int ws_id, string header_text, string position)
         {
             WWWForm form = new WWWForm();
             form.AddField("ws_id", ws_id);
             form.AddField("header_text", header_text);
             form.AddField("position", position);
             WWW www = new WWW(saveHeaderURL, form);
+            yield return www;
+            callback(www.text);
+        }
+
+        public void saveHeaderText(int id, string header_text)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("id", id);
+            form.AddField("header_text", header_text);
+            WWW www = new WWW(saveHeaderTextURL, form);
+
+        }
+
+        public IEnumerator saveHeaderPos(int id, string position)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("id", id);
+            form.AddField("position", position);
+            WWW www = new WWW(saveHeaderPosURL, form);
+            yield return www;
+        }
+
+        public IEnumerator removeNoteRelation(int note_id)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("note_id", note_id);
+            WWW www = new WWW(removeNoteRelationURL, form);
+            yield return www;
+            Debug.Log(www.text);
+        }
+
+        public IEnumerator getWorkspace(int ws_id)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("ws_id", ws_id);
+            WWW www = new WWW(getWorkspaceURL, form);
+            yield return www;
+            Debug.Log(www.text);
+        }
+
+        public void saveWorkspaceSize(int ws_id, string width, string height)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("ws_id", ws_id);
+            form.AddField("width", width);
+            form.AddField("height", height);
+            WWW www = new WWW(setWorkspaceSizeURL, form);
+        }
+
+        public IEnumerator updateWorkspaceSize(System.Action<string> callback, int id)
+        {
+           
+            WWWForm form = new WWWForm();
+            form.AddField("id", id);
+            WWW www = new WWW(checkWorkspaceSizeURL, form);
+
+            yield return www;
+            callback(www.text);
+            
         }
     }
 }

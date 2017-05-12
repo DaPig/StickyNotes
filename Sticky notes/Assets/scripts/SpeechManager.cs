@@ -12,7 +12,7 @@ public class SpeechManager : MonoBehaviour
 {
     public GameObject text;
     private static GameObject infoText;
-    private static GameObject notepad;
+    private static GameObject textObject;
     private static DictationRecognizer dictationRecognizer;
     private AudioFeedback audio;
 
@@ -136,8 +136,8 @@ public class SpeechManager : MonoBehaviour
         infoText = Instantiate(text, Camera.main.transform.position, Camera.main.transform.rotation);
         infoText.GetComponentInChildren<Text>().text = "Click anywhere to stop recording";*/
         TapEvent.speaking = true;
-        notepad = note;
-        notepad.GetComponentInParent<TapToPlace>().enabled = false;
+        textObject = note;
+        textObject.GetComponentInParent<TapToPlace>().enabled = false;
 
         //Shutdown the Phrase recognizer and start dictation
         PhraseRecognitionSystem.Shutdown();
@@ -163,8 +163,8 @@ public class SpeechManager : MonoBehaviour
         textSoFar.Length = 0;
         TapEvent.speaking = true;
         login = true;
-        notepad = note;
-        notepad.GetComponent<Text>().text = "";
+        textObject = note;
+        textObject.GetComponent<Text>().text = "";
 
         //Shutdown the Phrase recognizer and start dictation
         PhraseRecognitionSystem.Shutdown();
@@ -181,9 +181,10 @@ public class SpeechManager : MonoBehaviour
     {
         textSoFar.Length = 0;
         TapEvent.speaking = true;
-        login = true;
-        notepad = header;
-        notepad.GetComponent<Text>().text = "";
+        textObject = header;
+        textObject.GetComponent<Text>().text = "";
+
+        textObject.GetComponentInParent<TapToPlace>().enabled = false;
 
         //Shutdown the Phrase recognizer and start dictation
         PhraseRecognitionSystem.Shutdown();
@@ -210,8 +211,19 @@ public class SpeechManager : MonoBehaviour
         }
         if (!login)
         {
-            dbconnection.editNote(notepad.transform.parent.GetComponent<NoteCommands>().noteId.ToString(), notepad.GetComponentInChildren<Text>().text);
-            notepad.GetComponentInParent<TapToPlace>().enabled = true;
+            Debug.Log(textObject.name);
+            if (textObject.transform.parent.tag == "Header")
+            {
+                Debug.Log("hahahahahaha");
+                Debug.Log(textObject.transform.parent.GetComponent<HeaderScript>().headerId);
+                Debug.Log(textObject.GetComponent<Text>().text);
+                dbconnection.saveHeaderText(textObject.transform.parent.GetComponent<HeaderScript>().headerId, textObject.GetComponent<Text>().text);
+            }
+            else
+            {
+                dbconnection.editNote(textObject.transform.parent.GetComponent<NoteCommands>().noteId.ToString(), textObject.GetComponentInChildren<Text>().text);
+            }     
+            textObject.GetComponentInParent<TapToPlace>().enabled = true;
         }
         Microphone.End(deviceName);
     }
@@ -238,11 +250,11 @@ public class SpeechManager : MonoBehaviour
                 textSoFar.Replace("one", "1");
                 textSoFar.Replace("zero", "0");
             }
-            notepad.GetComponent<Text>().text = textSoFar.ToString();
+            textObject.GetComponent<Text>().text = textSoFar.ToString();
         }
         else
         {
-            notepad.GetComponentInChildren<Text>().text = textSoFar.ToString() + text;
+            textObject.GetComponentInChildren<Text>().text = textSoFar.ToString() + text;
         }
     }
 
@@ -258,11 +270,11 @@ public class SpeechManager : MonoBehaviour
             textSoFar.Append(text);
             textSoFar.Replace("one", "1");
             textSoFar.Replace("zero", "0");
-            notepad.GetComponent<Text>().text = textSoFar.ToString() + " ";
+            textObject.GetComponent<Text>().text = textSoFar.ToString() + " ";
         }else
         {
             textSoFar.Append(text);
-            notepad.GetComponentInChildren<Text>().text = textSoFar.ToString() + " ";
+            textObject.GetComponentInChildren<Text>().text = textSoFar.ToString() + " ";
         }
         
     }
@@ -303,11 +315,11 @@ public class SpeechManager : MonoBehaviour
     {
         if (login)
         {
-            notepad.GetComponent<Text>().text = error + "\nHRESULT: " + hresult;
+            textObject.GetComponent<Text>().text = error + "\nHRESULT: " + hresult;
         }
         else
         {
-            notepad.GetComponentInChildren<Text>().text = error + "\nHRESULT: " + hresult;
+            textObject.GetComponentInChildren<Text>().text = error + "\nHRESULT: " + hresult;
         }
         
     }

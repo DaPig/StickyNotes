@@ -28,7 +28,7 @@ public class StartScript : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
-        timestamp = 0.0165f;
+        timestamp = 0.165f;
         bar = Instantiate(loadingBar, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
         /*userID = Instantiate(userIDPref, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
         userID.GetComponentInChildren<Text>().text = "User: " + UserScript.userId;*/

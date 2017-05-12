@@ -35,6 +35,9 @@ namespace HoloToolkit.Unity.InputModule
         private HoldEventData holdEventData;
         private SpeechKeywordRecognizedEventData speechKeywordRecognizedEventData;
 
+        public bool IsNavigating { get; private set; } 
+        public Vector3 NavigationPosition { get; private set; }
+
         /// <summary>
         /// Indicates if input is currently enabled or not.
         /// </summary>
@@ -605,7 +608,8 @@ namespace HoloToolkit.Unity.InputModule
         {
             // Create input event
             navigationEventData.Initialize(e.InputSource, e.SourceId, e.NormalizedOffset);
-
+            IsNavigating = true;
+            NavigationPosition = e.NormalizedOffset;
             // Pass handler through HandleEvent to perform modal/fallback logic
             HandleEvent(navigationEventData, OnNavigationStartedEventHandler);
         }
@@ -615,13 +619,16 @@ namespace HoloToolkit.Unity.InputModule
             {
                 NavigationEventData casted = ExecuteEvents.ValidateEventData<NavigationEventData>(eventData);
                 handler.OnNavigationUpdated(casted);
+
             };
+
 
         private void InputSource_NavigationUpdated(object sender, NavigationEventArgs e)
         {
             // Create input event
             navigationEventData.Initialize(e.InputSource, e.SourceId, e.NormalizedOffset);
-
+            IsNavigating = true;
+            NavigationPosition = e.NormalizedOffset;
             // Pass handler through HandleEvent to perform modal/fallback logic
             HandleEvent(navigationEventData, OnNavigationUpdatedEventHandler);
         }
@@ -637,7 +644,7 @@ namespace HoloToolkit.Unity.InputModule
         {
             // Create input event
             navigationEventData.Initialize(e.InputSource, e.SourceId, e.NormalizedOffset);
-
+            IsNavigating = false;
             // Pass handler through HandleEvent to perform modal/fallback logic
             HandleEvent(navigationEventData, OnNavigationCompletedEventHandler);
         }
@@ -653,7 +660,7 @@ namespace HoloToolkit.Unity.InputModule
         {
             // Create input event
             navigationEventData.Initialize(e.InputSource, e.SourceId, e.NormalizedOffset);
-
+            IsNavigating = false;
             // Pass handler through HandleEvent to perform modal/fallback logic
             HandleEvent(navigationEventData, OnNavigationCanceledEventHandler);
         }

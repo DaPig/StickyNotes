@@ -21,6 +21,7 @@ public class TapEvent : MonoBehaviour
     /// </summary>
     private void OnTap(InteractionSourceKind source, int tapCount, Ray headRay)
     {
+        
         if (speaking)
         {
             SpeechManager.StopRecording();
