@@ -18,6 +18,8 @@ public class StartScript : MonoBehaviour {
     public GameObject userIDPref;
     private GameObject userID;
 
+    private GameObject numpad;
+
     public bool hit;
     public RaycastHit hitInfo;
     private bool once = false;
@@ -33,14 +35,14 @@ public class StartScript : MonoBehaviour {
         /*userID = Instantiate(userIDPref, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
         userID.GetComponentInChildren<Text>().text = "User: " + UserScript.userId;*/
         isLoading = true;
-
+        Debug.Log(bar.name);
         if(UserScript.userId != -1)
         {
             SpeechManager.setLoginTrue();
             welcomeText = Instantiate(welcomeTextPrefab, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
             welcomeText.GetComponentInChildren<Text>().text = "Welcome";
         }
-
+        
     }
 
     /// <summary>
@@ -51,6 +53,7 @@ public class StartScript : MonoBehaviour {
     {
         if (isLoading)
         {
+            //gameObject.transform.Find("InputManager").GetComponent<KeywordManager>().enabled = false;
             if (bar.transform.GetChild(1).GetComponent<Image>().fillAmount >= 1)
             {
                 Destroy(bar);
@@ -63,7 +66,7 @@ public class StartScript : MonoBehaviour {
                 DoSomething();
             }
             //Changes the fill ammount of the loading bar
-            current += (19 * timestamp);
+            current += (10 * timestamp);
             bar.transform.GetChild(1).GetComponent<Image>().fillAmount = current / 100;
             bar.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.25f, 1f));
             bar.transform.LookAt(2f * bar.transform.position - Camera.main.transform.position);
@@ -106,6 +109,9 @@ public class StartScript : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Instantiates the guides for the application on start.
+    /// </summary>
     public void DoSomething()
     {
         Debug.Log(current);

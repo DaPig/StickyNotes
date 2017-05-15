@@ -27,6 +27,9 @@ public class WorkspaceScript : MonoBehaviour {
        
     }
 
+    /// <summary>
+    /// Updates the size of the workspace "realtime"
+    /// </summary>
     private void updateSize()
     {
         StartCoroutine(dbconnection.updateWorkspaceSize((size) => {
@@ -39,6 +42,7 @@ public class WorkspaceScript : MonoBehaviour {
         }, id));
     }
 
+    /*
     public void addField()
     {
         GameObject button = GazeManager.Instance.HitObject.gameObject;
@@ -50,5 +54,5 @@ public class WorkspaceScript : MonoBehaviour {
         thingy.transform.parent = GameObject.Find("GridWithOurElementsOrOptions").transform;
         button.transform.position = stuff;
 
-    }
+    }*/
 }

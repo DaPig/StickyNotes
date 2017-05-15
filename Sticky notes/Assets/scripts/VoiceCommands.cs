@@ -15,6 +15,7 @@ public class VoiceCommands : MonoBehaviour
     public GameObject keyboardPrefab;
     public GameObject WorkspacePrefab;
     public GameObject HeaderPrefab;
+    public GameObject WsInputPrefab;
 
     private GameObject resize;
     private GameObject adjust;
@@ -196,6 +197,10 @@ public class VoiceCommands : MonoBehaviour
         SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
     }
 
+    /// <summary>
+    /// Activation of voice dictation on login
+    /// CURRENTLY NOT USED!!!
+    /// </summary>
     public void loginUser()
     {
         GameObject.Find("UsernameField").transform.GetChild(1).GetComponent<Text>().text = "";
@@ -232,6 +237,7 @@ public class VoiceCommands : MonoBehaviour
             ws.GetComponent<WorkspaceScript>().id = Int32.Parse(id);
             Debug.Log(ws.transform.GetComponent<RectTransform>().rect.width);
             dbconnection.saveWorkspaceSize(Int32.Parse(id), ws.transform.GetComponent<RectTransform>().rect.width.ToString(), ws.transform.GetComponent<RectTransform>().rect.height.ToString());
+            ws.transform.GetChild(2).GetComponentInChildren<Text>().text = id;
         }));        
     }
 
@@ -271,18 +277,46 @@ public class VoiceCommands : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Removes the workspace which is gazed at.
+    /// </summary>
+    public void removeWorkspace()
+    {
+        GameObject ws = null;
+        Vector3 headPosition = Camera.main.transform.position;
+        Vector3 gazeDirection = Camera.main.transform.forward;
+        RaycastHit hitInfoTwo;
+        if (Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask))
+        {
+            ws = hitInfoTwo.transform.gameObject;
+        }
+        if(ws.tag == "Workspace")
+        {
+            Destroy(ws);
+        }
+    }
+
+    /// <summary>
+    /// Enables the menu buttons for workspace.
+    /// </summary>
     public void enableAdjustButtons()
     {
         adjust.SetActive(true);
         resize.SetActive(true);
     }
 
+    /// <summary>
+    /// Disables the menu buttons for workspace.
+    /// </summary>
     public void disableAdjustButtons()
     {
         adjust.SetActive(false);
         resize.SetActive(false);
     }
 
+    /// <summary>
+    /// Creates a header on the workspace, if the user is gazing at a workspace.
+    /// </summary>
     public void createHeader()
     {
         GameObject workspace;
@@ -311,6 +345,9 @@ public class VoiceCommands : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Deletes the current header the user is gazing at.
+    /// </summary>
     public void deleteHeader()
     {
         Debug.Log("in delete" + GazeManager.Instance.HitObject.tag);
@@ -320,7 +357,9 @@ public class VoiceCommands : MonoBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Enables the editation of the current header which the user is gazing at.
+    /// </summary>
     public void editHeader()
     {
         if (GazeManager.Instance.HitObject.tag == "Header")
@@ -330,7 +369,10 @@ public class VoiceCommands : MonoBehaviour
         }
     }
 
-    public void getWorkspace()
+    /// <summary>
+    /// Gets a specific workspace from the database with all the notes and headers in it.
+    /// </summary>
+    public void getWorkspace(int wsId)
     {
         //StartCoroutine(dbconnection.getWorkspace(68));
        StartCoroutine(dbGetWs.getWS((workspace, headerlist) => {
@@ -340,6 +382,7 @@ public class VoiceCommands : MonoBehaviour
            float height = float.Parse(workspace.Workspace[0].height);
            workspaceObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
            workspaceObject.GetComponent<WorkspaceScript>().id = workspace.Workspace[0].ws_id;
+           workspaceObject.transform.GetChild(2).GetComponentInChildren<Text>().text = "ID:" + workspaceObject.GetComponent<WorkspaceScript>().id;
            GameObject notepad;
            GameObject header;
            for (int i = 0; i < workspace.Workspace.Count; i++)
@@ -367,8 +410,15 @@ public class VoiceCommands : MonoBehaviour
                header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
                header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
            }
-       }, 1));
+           Destroy(GameObject.Find("Numpad"));
+       }, wsId));
 
+    }
+
+    public void getWorkspaceInput()
+    {
+        Quaternion lockrotation = Camera.main.transform.localRotation;
+        Instantiate(WsInputPrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0));
     }
 
 }

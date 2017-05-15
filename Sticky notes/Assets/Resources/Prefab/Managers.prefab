@@ -53,7 +53,6 @@ GameObject:
   - component: {fileID: 4073837933509206}
   - component: {fileID: 114713598129860458}
   - component: {fileID: 114623443421285276}
-  - component: {fileID: 114193939822982814}
   - component: {fileID: 114953662029140404}
   - component: {fileID: 114103665495488134}
   - component: {fileID: 114541155181869830}
@@ -61,7 +60,7 @@ GameObject:
   - component: {fileID: 114572327258597188}
   - component: {fileID: 114139819619425254}
   - component: {fileID: 114221983260728432}
-  - component: {fileID: 114271796479330112}
+  - component: {fileID: 114270646073015644}
   m_Layer: 0
   m_Name: InputManager
   m_TagString: Untagged
@@ -823,17 +822,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfb7620140a7b044d9abeed031fa36d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114193939822982814
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1073881161640376}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b160d197a8ca1894796ae263bafec0ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114212020835871134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -864,6 +852,8 @@ MonoBehaviour:
   WorkspacePrefab: {fileID: 1149516931170468, guid: 4819b9621251fd144ac16a17f3cce5f3,
     type: 2}
   HeaderPrefab: {fileID: 1350206288000882, guid: bf027ea8895e54e46a52b190fb794345,
+    type: 2}
+  WsInputPrefab: {fileID: 1442587365747158, guid: b87f9d637c05e0140aa382fb1a24185b,
     type: 2}
   notes: []
   headers: []
@@ -903,7 +893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RoomModel: {fileID: 0}
---- !u!114 &114271796479330112
+--- !u!114 &114270646073015644
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -911,11 +901,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1073881161640376}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d40781677294a0e4caffa3460012ae41, type: 3}
+  m_Script: {fileID: 11500000, guid: b160d197a8ca1894796ae263bafec0ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  UseRailsNavigation: 0
-  isTapping: 0
 --- !u!114 &114314766060208100
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1266,6 +1254,42 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 114221983260728432}
           m_MethodName: saveWorkspace
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - Keyword: Get workspace
+    KeyCode: 0
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114221983260728432}
+          m_MethodName: getWorkspaceInput
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - Keyword: Remove workspace
+    KeyCode: 0
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114221983260728432}
+          m_MethodName: removeWorkspace
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}

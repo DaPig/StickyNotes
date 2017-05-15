@@ -42,6 +42,11 @@ namespace conn
             callback(www.text);
         }
 
+        /// <summary>
+        /// Saves the notes current position in the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="position"></param>
         public void saveNotePos(int id, string position)
         {
             WWWForm form = new WWWForm();
@@ -107,6 +112,11 @@ namespace conn
             }
         }
 
+        /// <summary>
+        /// Inserts the created workspace on the database.
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <returns></returns>
         public IEnumerator insertWorkspace(System.Action<string> callback)
         {
             WWWForm form = new WWWForm();
@@ -115,6 +125,11 @@ namespace conn
             callback(www.text);
         }
 
+        /// <summary>
+        /// Saves the current workspace and updates the values on the database.
+        /// </summary>
+        /// <param name="note_id"></param>
+        /// <param name="ws_id"></param>
         public void saveWs(int note_id, int ws_id)
         {
             WWWForm form = new WWWForm();
@@ -123,6 +138,14 @@ namespace conn
             WWW www = new WWW(saveWorkspaceURL, form);
         }
 
+        /// <summary>
+        /// Saves the header that is attached to a specific workspace on the database.
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="ws_id"></param>
+        /// <param name="header_text"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
         public IEnumerator saveHeader(System.Action<string> callback, int ws_id, string header_text, string position)
         {
             WWWForm form = new WWWForm();
@@ -134,6 +157,11 @@ namespace conn
             callback(www.text);
         }
 
+        /// <summary>
+        /// Updates the content of header in the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="header_text"></param>
         public void saveHeaderText(int id, string header_text)
         {
             WWWForm form = new WWWForm();
@@ -143,6 +171,12 @@ namespace conn
 
         }
 
+        /// <summary>
+        /// Updates the headers position on the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
         public IEnumerator saveHeaderPos(int id, string position)
         {
             WWWForm form = new WWWForm();
@@ -152,6 +186,11 @@ namespace conn
             yield return www;
         }
 
+        /// <summary>
+        /// Removes the relation between a note and a workspace.
+        /// </summary>
+        /// <param name="note_id"></param>
+        /// <returns></returns>
         public IEnumerator removeNoteRelation(int note_id)
         {
             WWWForm form = new WWWForm();
@@ -161,6 +200,11 @@ namespace conn
             Debug.Log(www.text);
         }
 
+        /// <summary>
+        /// Gets a specific workspace from the database.
+        /// </summary>
+        /// <param name="ws_id"></param>
+        /// <returns></returns>
         public IEnumerator getWorkspace(int ws_id)
         {
             WWWForm form = new WWWForm();
@@ -170,6 +214,12 @@ namespace conn
             Debug.Log(www.text);
         }
 
+        /// <summary>
+        /// Save the workspace width and height.
+        /// </summary>
+        /// <param name="ws_id"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
         public void saveWorkspaceSize(int ws_id, string width, string height)
         {
             WWWForm form = new WWWForm();
@@ -179,6 +229,12 @@ namespace conn
             WWW www = new WWW(setWorkspaceSizeURL, form);
         }
 
+        /// <summary>
+        /// Updates the workspace width and height.
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public IEnumerator updateWorkspaceSize(System.Action<string> callback, int id)
         {
            

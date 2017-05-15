@@ -47,7 +47,7 @@ namespace getWs
     }
 
     [System.Serializable]
-
+    
     public class Header
     {
         public int ws_id;
@@ -61,6 +61,9 @@ namespace getWs
         }
     }
 
+    /// <summary>
+    /// Gets the workspace with all its content from the database via a JSON.
+    /// </summary>
     public class getWorkspace : MonoBehaviour
     {
         public Text txt;

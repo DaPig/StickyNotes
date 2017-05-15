@@ -177,6 +177,11 @@ public class SpeechManager : MonoBehaviour
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
     }
 
+    /// <summary>
+    /// Speech for header
+    /// </summary>
+    /// <param name="header"></param>
+    /// <returns></returns>
     public AudioClip StartRecordingHeader(GameObject header)
     {
         textSoFar.Length = 0;

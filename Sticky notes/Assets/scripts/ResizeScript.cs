@@ -32,6 +32,10 @@ public class ResizeScript : MonoBehaviour
         startedResizeing = false;
     }
 
+    /// <summary>
+    /// Calls update if navigating gesture is performed and resize hasn't started.
+    /// If these statements are correct the update performs a resize of box-collider and updates the database.
+    /// </summary>
     void Update()
     {
         if (gesture.IsNavigating)
@@ -65,6 +69,9 @@ public class ResizeScript : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Performs the resize on a given workspace, changing the width and height of the workspace according to drag-event.
+    /// </summary>
     private void PerformRotation()
     {
         Debug.Log(GazeManager.Instance.HitObject.name);
