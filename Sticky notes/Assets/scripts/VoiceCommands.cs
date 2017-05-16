@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System;
 using HoloToolkit.Unity.InputModule;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using HoloToolkit.Unity.SpatialMapping;
 
+
 public class VoiceCommands : MonoBehaviour
 {
     public GameObject NotepadPrefab;
@@ -16,6 +18,7 @@ public class VoiceCommands : MonoBehaviour
     public GameObject WorkspacePrefab;
     public GameObject HeaderPrefab;
     public GameObject WsInputPrefab;
+    public GameObject ErrorTextPrefab;
 
     private GameObject resize;
     private GameObject adjust;
@@ -32,6 +35,8 @@ public class VoiceCommands : MonoBehaviour
     public List<GameObject> notes;
     public List<GameObject> headers;
 
+    private GameObject ErrorText;
+
     public bool hit;
     public RaycastHit hitInfo;
 
@@ -47,12 +52,19 @@ public class VoiceCommands : MonoBehaviour
         dbGetWs = new getWorkspace();
         speech = GetComponent < SpeechManager> ();
         notes = new List<GameObject>();
+        headers = new List<GameObject>();
 
     }
 
     void Update()
     {
         hit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 20f, SpatialMappingManager.Instance.LayerMask);
+        if(ErrorText != null)
+        {
+            ErrorText.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 1f));
+            ErrorText.transform.LookAt(2f * ErrorText.transform.position - Camera.main.transform.position);
+            ErrorText.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
+        }
     }
 
     /// <summary>
@@ -332,7 +344,7 @@ public class VoiceCommands : MonoBehaviour
             if (workspace.tag == "Workspace")
             {
                 
-                header = Instantiate(HeaderPrefab, GazeManager.Instance.HitPosition + Camera.main.transform.forward * -0.05f, workspace.transform.rotation) as GameObject;
+                header = Instantiate(HeaderPrefab, GazeManager.Instance.HitPosition, workspace.transform.rotation) as GameObject;
                 header.transform.SetParent(workspace.transform);
                 headers.Add(header);
                 string pos = header.transform.localPosition.x + "," + header.transform.localPosition.y;
@@ -342,7 +354,24 @@ public class VoiceCommands : MonoBehaviour
                 },workspace.GetComponent<WorkspaceScript>().id, header.GetComponentInChildren<Text>().text, pos ));
                 
             }
+        }else
+        {
+            if(ErrorText == null)
+            {
+                ErrorText = Instantiate(ErrorTextPrefab, Camera.main.transform.position + 1f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                StartCoroutine(errorTime());
+            }
         }
+    }
+
+    /// <summary>
+    /// Removes the error message for header if the user tries to create a header outside of workspace.
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator errorTime()
+    {
+        yield return new WaitForSeconds(4f);
+        Destroy(ErrorText);
     }
 
     /// <summary>
@@ -350,7 +379,6 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void deleteHeader()
     {
-        Debug.Log("in delete" + GazeManager.Instance.HitObject.tag);
         if(GazeManager.Instance.HitObject.tag == "Header")
         {
             Destroy(GazeManager.Instance.HitObject);
@@ -375,50 +403,126 @@ public class VoiceCommands : MonoBehaviour
     public void getWorkspace(int wsId)
     {
         //StartCoroutine(dbconnection.getWorkspace(68));
-       StartCoroutine(dbGetWs.getWS((workspace, headerlist) => {
-           Quaternion lockrotation = Camera.main.transform.localRotation;
-           GameObject workspaceObject = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-           float width = float.Parse(workspace.Workspace[0].width);
-           float height = float.Parse(workspace.Workspace[0].height);
-           workspaceObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-           workspaceObject.GetComponent<WorkspaceScript>().id = workspace.Workspace[0].ws_id;
-           workspaceObject.transform.GetChild(2).GetComponentInChildren<Text>().text = "ID:" + workspaceObject.GetComponent<WorkspaceScript>().id;
-           GameObject notepad;
-           GameObject header;
-           for (int i = 0; i < workspace.Workspace.Count; i++)
-           {
-               string[] pos = workspace.Workspace[i].Note_pos.Split(',');
-               notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
-               notepad.transform.SetParent(workspaceObject.transform);
-               float xPos = float.Parse(pos[0]);
-               float yPos = float.Parse(pos[1]);
-               Vector3 localpos = new Vector3(xPos, yPos , 0);
-               notepad.transform.localPosition = localpos;
-               notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
-               notepad.GetComponent<NoteCommands>().noteId = workspace.Workspace[i].note_id;
-           }
-           Debug.Log(headerlist.headerList);
-           for (int i = 0; i < headerlist.headerList.Count; i++)
-           {
-               string[] pos = headerlist.headerList[i].Header_pos.Split(',');
-               header = Instantiate(HeaderPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
-               header.transform.SetParent(workspaceObject.transform);
-               float xPos = float.Parse(pos[0]);
-               float yPos = float.Parse(pos[1]);
-               Vector3 localpos = new Vector3(xPos, yPos, 0);
-               header.transform.localPosition = localpos;
-               header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
-               header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
-           }
-           Destroy(GameObject.Find("Numpad"));
-       }, wsId));
+        StartCoroutine(dbGetWs.getWS((workspace, headerlist) => {
 
+            Quaternion lockrotation = Camera.main.transform.localRotation;
+            GameObject workspaceObject = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            float width = float.Parse(workspace.Workspace[0].width);
+            float height = float.Parse(workspace.Workspace[0].height);
+            workspaceObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+            workspaceObject.GetComponent<WorkspaceScript>().id = workspace.Workspace[0].ws_id;
+            workspaceObject.transform.GetChild(2).GetComponentInChildren<Text>().text = "ID:" + workspaceObject.GetComponent<WorkspaceScript>().id;
+            GameObject notepad;
+            GameObject header;
+            for (int i = 0; i < workspace.Workspace.Count; i++)
+            {
+
+                string[] pos = workspace.Workspace[i].Note_pos.Split(',');
+                notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+                notepad.transform.SetParent(workspaceObject.transform);
+                float xPos = float.Parse(pos[0]);
+                float yPos = float.Parse(pos[1]);
+                Vector3 localpos = new Vector3(xPos, yPos , 0);
+                notepad.transform.localPosition = localpos;
+                notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
+                notepad.GetComponent<NoteCommands>().noteId = workspace.Workspace[i].note_id;
+                if(!notes.Contains(notepad))
+                    notes.Add(notepad);
+            }
+            for (int i = 0; i < headerlist.headerList.Count; i++)
+            {
+                string[] pos = headerlist.headerList[i].Header_pos.Split(',');
+                header = Instantiate(HeaderPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+                header.transform.SetParent(workspaceObject.transform);
+                float xPos = float.Parse(pos[0]);
+                float yPos = float.Parse(pos[1]);
+                Vector3 localpos = new Vector3(xPos, yPos, 0);
+                header.transform.localPosition = localpos;
+                header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
+                header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
+                if(!headers.Contains(header))
+                    headers.Add(header);
+            }
+            Destroy(GameObject.FindGameObjectWithTag("Numpad"));
+       }, wsId));
     }
 
+
+    /// <summary>
+    /// Creates the numpad to get a specific workspace.
+    /// </summary>
     public void getWorkspaceInput()
     {
-        Quaternion lockrotation = Camera.main.transform.localRotation;
-        Instantiate(WsInputPrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0));
+        if(GameObject.FindGameObjectWithTag("Numpad") == null)
+        {
+            Quaternion lockrotation = Camera.main.transform.localRotation;
+            Instantiate(WsInputPrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0));
+        }
+    }
+
+    public void updateWorkspace()
+    {
+        Vector3 headPosition = Camera.main.transform.position;
+        Vector3 gazeDirection = Camera.main.transform.forward;
+        RaycastHit hitInfoTwo;
+        bool isWorkspace = Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask);
+        int wsId = hitInfoTwo.collider.gameObject.GetComponent<WorkspaceScript>().id;
+        StartCoroutine(dbGetWs.getWS((workspace, headerlist) => {
+            Quaternion lockrotation = Camera.main.transform.localRotation;
+            GameObject workspaceObject = null;
+            if (isWorkspace)
+            {
+                workspaceObject = hitInfoTwo.collider.gameObject;
+                float width = float.Parse(workspace.Workspace[0].width);
+                float height = float.Parse(workspace.Workspace[0].height);
+                workspaceObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+                GameObject notepad = null;
+                GameObject header = null;
+                for (int i = 0; i < workspace.Workspace.Count; i++)
+                {
+                    string[] pos = workspace.Workspace[i].Note_pos.Split(',');
+                    float xPos = float.Parse(pos[0]);
+                    float yPos = float.Parse(pos[1]);
+                    Vector3 localpos = new Vector3(xPos, yPos, 0);
+                    if(notes[i].GetComponent<NoteCommands>().noteId == workspace.Workspace[i].note_id)
+                    {
+                        notes[i].transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
+                        notes[i].transform.localPosition = localpos;
+                    }else
+                    {
+                        notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+                        notepad.transform.SetParent(workspaceObject.transform);
+                        notepad.transform.localPosition = localpos;
+                        notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
+                        notepad.GetComponent<NoteCommands>().noteId = workspace.Workspace[i].note_id;
+                        if(notes.Contains(notepad))
+                            notes.Add(notepad);
+                    }
+                }
+                for (int i = 0; i < headerlist.headerList.Count; i++)
+                {
+                    string[] pos = headerlist.headerList[i].Header_pos.Split(',');
+                    float xPos = float.Parse(pos[0]);
+                    float yPos = float.Parse(pos[1]);
+                    Vector3 localpos = new Vector3(xPos, yPos, 0);
+
+                    if (headers[i].GetComponent<HeaderScript>().headerId == headerlist.headerList[i].header_id)
+                    {
+                        headers[i].transform.localPosition = localpos;
+                        headers[i].transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
+                    }else
+                    {
+                        header = Instantiate(HeaderPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+                        header.transform.SetParent(workspaceObject.transform);
+                        header.transform.localPosition = localpos;
+                        header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
+                        header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
+                        if(headers.Contains(header))
+                            headers.Add(header);
+                    }
+                }
+            }
+        }, wsId));
     }
 
 }

@@ -12,6 +12,7 @@ TagManager:
   - PostIT
   - ResizeButton
   - Header
+  - Numpad
   layers:
   - Default
   - TransparentFX

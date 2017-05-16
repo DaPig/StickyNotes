@@ -79,16 +79,25 @@ public class ResizeScript : MonoBehaviour
             Debug.Log(size.rect.height);
             rotationFactorX = gesture.NavigationPosition.x * RotationSensitivity;
             rotationFactorY = gesture.NavigationPosition.y * RotationSensitivity;
-            if (size.rect.width <= 50)
+            if (size.rect.width < 50)
             {
-                size.sizeDelta = new Vector2(50.1f, size.rect.height + rotationFactorY * -1);
-                box.size = new Vector3(50.1f, size.rect.height + rotationFactorY * -1, 0.01f);
+                size.sizeDelta = new Vector2(50f, size.rect.height + rotationFactorY * -1);
+                box.size = new Vector3(50f, size.rect.height + rotationFactorY * -1, 0.01f);
             }
-            else if (size.rect.height <= 50)
+            else if (size.rect.height < 50)
             {
-                Debug.Log("height 50");
-                size.sizeDelta = new Vector2(size.rect.width + rotationFactorX, 50.1f);
-                box.size = new Vector3(size.rect.width + rotationFactorX, 50.1f, 0.01f);
+                size.sizeDelta = new Vector2(size.rect.width + rotationFactorX, 50f);
+                box.size = new Vector3(size.rect.width + rotationFactorX, 50f, 0.01f);
+            }
+            else if(size.rect.width > 300)
+            {
+                size.sizeDelta = new Vector2(300f, size.rect.height + rotationFactorY * -1);
+                box.size = new Vector3(300f, size.rect.height + rotationFactorY * -1, 0.01f);
+            }
+            else if (size.rect.height > 200)
+            {
+                size.sizeDelta = new Vector2(size.rect.width + rotationFactorX, 200f);
+                box.size = new Vector3(size.rect.width + rotationFactorX, 200f, 0.01f);
             }
             else
             {

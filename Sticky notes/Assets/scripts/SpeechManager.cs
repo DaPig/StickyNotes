@@ -108,7 +108,7 @@ public class SpeechManager : MonoBehaviour
             }
             if (timestamp != 0)
             {
-                current += (5 * timestamp);
+                current += (10 * timestamp);
                 currentLoading.transform.GetChild(0).GetChild(0).GetComponent<Image>().fillAmount = current / 100;
             }
 
@@ -147,7 +147,7 @@ public class SpeechManager : MonoBehaviour
         hasRecordingStarted = true;
 
         //Used to fill the loading circle
-        timestamp = 0.0333f;
+        timestamp = Time.deltaTime;
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
     }
@@ -216,12 +216,8 @@ public class SpeechManager : MonoBehaviour
         }
         if (!login)
         {
-            Debug.Log(textObject.name);
             if (textObject.transform.parent.tag == "Header")
             {
-                Debug.Log("hahahahahaha");
-                Debug.Log(textObject.transform.parent.GetComponent<HeaderScript>().headerId);
-                Debug.Log(textObject.GetComponent<Text>().text);
                 dbconnection.saveHeaderText(textObject.transform.parent.GetComponent<HeaderScript>().headerId, textObject.GetComponent<Text>().text);
             }
             else

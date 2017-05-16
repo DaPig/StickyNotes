@@ -30,7 +30,7 @@ public class WorkspaceScript : MonoBehaviour {
     /// <summary>
     /// Updates the size of the workspace "realtime"
     /// </summary>
-    private void updateSize()
+    /*private void updateSize()
     {
         StartCoroutine(dbconnection.updateWorkspaceSize((size) => {
             Regex reg = new Regex(@"\d");
@@ -40,7 +40,7 @@ public class WorkspaceScript : MonoBehaviour {
                 this.GetComponent<RectTransform>().sizeDelta = new Vector2(float.Parse(sizes[0]), float.Parse(sizes[1]));
             }     
         }, id));
-    }
+    }*/
 
     /*
     public void addField()

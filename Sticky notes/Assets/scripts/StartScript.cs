@@ -25,12 +25,21 @@ public class StartScript : MonoBehaviour {
     private bool once = false;
     private bool isLoading = false;
     private float timestamp = 0;
-    private float current = 0;
+    private static float current = 0;
 
     // Use this for initialization
     void Start () {
-
-        timestamp = 0.165f;
+        Debug.Log(timestamp);
+        if (SpeechManager.getLogin())
+        {
+            timestamp = Time.deltaTime/4;
+            Debug.Log(timestamp);
+        }
+        else
+        {
+            timestamp = Time.deltaTime;
+            Debug.Log(timestamp);
+        }
         bar = Instantiate(loadingBar, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
         /*userID = Instantiate(userIDPref, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
         userID.GetComponentInChildren<Text>().text = "User: " + UserScript.userId;*/
@@ -66,7 +75,7 @@ public class StartScript : MonoBehaviour {
                 DoSomething();
             }
             //Changes the fill ammount of the loading bar
-            current += (10 * timestamp);
+            current += (20 * timestamp);
             bar.transform.GetChild(1).GetComponent<Image>().fillAmount = current / 100;
             bar.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.25f, 1f));
             bar.transform.LookAt(2f * bar.transform.position - Camera.main.transform.position);
@@ -114,7 +123,6 @@ public class StartScript : MonoBehaviour {
     /// </summary>
     public void DoSomething()
     {
-        Debug.Log(current);
         if (current >= 100f)
         {
             //Wait for loading to finish then instantiate tutorials depending on what we are looking at

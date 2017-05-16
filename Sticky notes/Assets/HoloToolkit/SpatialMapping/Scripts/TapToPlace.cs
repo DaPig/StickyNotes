@@ -197,7 +197,7 @@ namespace HoloToolkit.Unity.SpatialMapping
         {
             // On each tap gesture, toggle whether the user is in placing mode.
             IsBeingPlaced = !IsBeingPlaced;
-            
+            Quaternion lockrotation = Camera.main.transform.localRotation;
             // If the user is in placing mode, display the spatial mapping mesh.
             if (IsBeingPlaced)
             {
@@ -266,7 +266,7 @@ namespace HoloToolkit.Unity.SpatialMapping
                             gazeObject.transform.SetParent(hitInfo.transform.gameObject.transform);
                             gazeObject.transform.localPosition = hitInfo.transform.InverseTransformPoint(hitInfo.point);
                             gazeObject.transform.localRotation = Quaternion.identity;
-                            gazeObject.transform.localScale = new Vector3(1, 1, 0);
+                            //gazeObject.transform.localScale = new Vector3(1, 1, 0);
                             savePos();
                         }
                     }
