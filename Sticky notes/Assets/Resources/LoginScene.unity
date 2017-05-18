@@ -450,6 +450,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &90083886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -982,6 +986,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &207947498
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1122,6 +1130,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &212861991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1803,6 +1815,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &658310054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2359,6 +2375,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &871156546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2610,6 +2630,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &942057031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2956,6 +2980,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &981185093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3413,6 +3441,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &1426073866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3882,6 +3914,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &1704169078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4587,6 +4623,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &1923779004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4855,6 +4895,9 @@ MonoBehaviour:
   HeaderPrefab: {fileID: 0}
   WsInputPrefab: {fileID: 0}
   ErrorTextPrefab: {fileID: 0}
+  numpadWorkspacePrefab: {fileID: 0}
+  numpadWsToGroupPrefab: {fileID: 0}
+  infoTextPrefab: {fileID: 0}
   notes: []
   headers: []
   hit: 0
@@ -5040,6 +5083,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9bafd59c1c40450429c3c4a8c009e191, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  infoTextPrefab: {fileID: 0}
+  myLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &1997400502
 MonoBehaviour:
   m_ObjectHideFlags: 0

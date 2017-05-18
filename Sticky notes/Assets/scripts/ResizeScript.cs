@@ -74,9 +74,7 @@ public class ResizeScript : MonoBehaviour
     /// </summary>
     private void PerformRotation()
     {
-        Debug.Log(GazeManager.Instance.HitObject.name);
         if(GazeManager.Instance.HitObject.tag == "Workspace" || GazeManager.Instance.HitObject.tag == "ResizeButton") {
-            Debug.Log(size.rect.height);
             rotationFactorX = gesture.NavigationPosition.x * RotationSensitivity;
             rotationFactorY = gesture.NavigationPosition.y * RotationSensitivity;
             if (size.rect.width < 50)

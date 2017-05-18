@@ -19,6 +19,9 @@ public class VoiceCommands : MonoBehaviour
     public GameObject HeaderPrefab;
     public GameObject WsInputPrefab;
     public GameObject ErrorTextPrefab;
+    public GameObject numpadWorkspacePrefab;
+    public GameObject numpadWsToGroupPrefab;
+    public GameObject infoTextPrefab;
 
     private GameObject resize;
     private GameObject adjust;
@@ -35,6 +38,9 @@ public class VoiceCommands : MonoBehaviour
     public List<GameObject> notes;
     public List<GameObject> headers;
 
+    private GameObject numpadWorkspace;
+    private GameObject numpadWsToGroup;
+    private GameObject infoText;
     private GameObject ErrorText;
 
     public bool hit;
@@ -64,6 +70,12 @@ public class VoiceCommands : MonoBehaviour
             ErrorText.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 1f));
             ErrorText.transform.LookAt(2f * ErrorText.transform.position - Camera.main.transform.position);
             ErrorText.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
+        }
+        if (infoText != null)
+        {
+            infoText.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 1f));
+            infoText.transform.LookAt(2f * infoText.transform.position - Camera.main.transform.position);
+            infoText.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
         }
     }
 
@@ -140,7 +152,8 @@ public class VoiceCommands : MonoBehaviour
             
             
         }, "", user));
-        StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+        if (StartScript.texts[1].transform.GetChild(0).GetComponentInChildren<Text>().text == "To create a note\nsay \"create note\"")
+            StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
     }
  
 
@@ -150,11 +163,12 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void deleteNote()
     {
-        if (GazeManager.Instance.IsGazingAtObject)
+        if (GazeManager.Instance.HitObject.tag == "PostIT")
         {
             Destroy(GazeManager.Instance.HitObject.gameObject);
             dbconnection.deleteNote(GazeManager.Instance.HitObject.GetComponent<NoteCommands>().noteId.ToString());
-            StartScript.texts[2].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+            if (StartScript.texts[2].transform.GetChild(0).GetComponentInChildren<Text>().text == "To remove a note\nsay \"remove note\"")
+                StartScript.texts[2].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
         }
     }
 
@@ -163,10 +177,17 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void startSpeech()
     {
-        if (GazeManager.Instance.IsGazingAtObject)
+        Quaternion lockrotation = Camera.main.transform.localRotation;
+        if (GazeManager.Instance.HitObject.tag == "PostIT")
         {
             speech.StartRecording(GazeManager.Instance.HitObject.transform.GetChild(1).gameObject);
-            StartScript.texts[0].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+            if (StartScript.texts[0].transform.GetChild(0).GetComponentInChildren<Text>().text == "To edit a note\nsay \"edit note\"")
+                StartScript.texts[0].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+        }else
+        {
+            infoText = Instantiate(infoTextPrefab, Camera.main.transform.position + 1f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            infoText.GetComponentInChildren<Text>().text = "You must look at a note\nto start editing";
+            StartCoroutine(infoTime());
         }
     }
 
@@ -235,10 +256,14 @@ public class VoiceCommands : MonoBehaviour
             if (hit)
             {
                 ws = Instantiate(WorkspacePrefab, hitInfo.point + Camera.main.transform.forward * -0.05f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                if(StartScript.texts[4].transform.GetChild(0).GetComponentInChildren<Text>().text == "To create a workspace\nsay \"create workspace\"")
+                   StartScript.texts[4].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
             }
             else
             { 
                 ws = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                if (StartScript.texts[4].transform.GetChild(0).GetComponentInChildren<Text>().text == "To create a workspace\nsay \"create workspace\"")
+                    StartScript.texts[4].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
             }
 
             adjust = ws.transform.GetChild(1).gameObject;
@@ -250,6 +275,10 @@ public class VoiceCommands : MonoBehaviour
             Debug.Log(ws.transform.GetComponent<RectTransform>().rect.width);
             dbconnection.saveWorkspaceSize(Int32.Parse(id), ws.transform.GetComponent<RectTransform>().rect.width.ToString(), ws.transform.GetComponent<RectTransform>().rect.height.ToString());
             ws.transform.GetChild(2).GetComponentInChildren<Text>().text = id;
+            if (UserScript.userId != -1)
+            {
+                dbconnection.addUserToWorkspace(UserScript.userId, Int32.Parse(id));
+            }
         }));        
     }
 
@@ -313,8 +342,18 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void enableAdjustButtons()
     {
-        adjust.SetActive(true);
-        resize.SetActive(true);
+        Quaternion lockrotation = Camera.main.transform.localRotation;
+        Vector3 headPosition = Camera.main.transform.position;
+        Vector3 gazeDirection = Camera.main.transform.forward;
+        RaycastHit hitInfoTwo;
+        if (Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask))
+        {
+            adjust.SetActive(true);
+            resize.SetActive(true);
+            if (StartScript.texts[3].transform.GetChild(0).GetComponentInChildren<Text>().text == "To open workspace menu\nsay \"open menu\"")
+                StartScript.texts[3].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+        }
+        
     }
 
     /// <summary>
@@ -322,8 +361,15 @@ public class VoiceCommands : MonoBehaviour
     /// </summary>
     public void disableAdjustButtons()
     {
-        adjust.SetActive(false);
-        resize.SetActive(false);
+        Quaternion lockrotation = Camera.main.transform.localRotation;
+        Vector3 headPosition = Camera.main.transform.position;
+        Vector3 gazeDirection = Camera.main.transform.forward;
+        RaycastHit hitInfoTwo;
+        if (Physics.Raycast(headPosition, gazeDirection, out hitInfoTwo, 30.0f, myLayerMask))
+        {
+            adjust.SetActive(false);
+            resize.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -374,6 +420,12 @@ public class VoiceCommands : MonoBehaviour
         Destroy(ErrorText);
     }
 
+    public IEnumerator infoTime()
+    {
+        yield return new WaitForSeconds(4f);
+        Destroy(infoText);
+    }
+
     /// <summary>
     /// Deletes the current header the user is gazing at.
     /// </summary>
@@ -404,7 +456,7 @@ public class VoiceCommands : MonoBehaviour
     {
         //StartCoroutine(dbconnection.getWorkspace(68));
         StartCoroutine(dbGetWs.getWS((workspace, headerlist) => {
-
+            Destroy(GameObject.FindGameObjectWithTag("Numpad"));
             Quaternion lockrotation = Camera.main.transform.localRotation;
             GameObject workspaceObject = Instantiate(WorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             float width = float.Parse(workspace.Workspace[0].width);
@@ -416,35 +468,39 @@ public class VoiceCommands : MonoBehaviour
             GameObject header;
             for (int i = 0; i < workspace.Workspace.Count; i++)
             {
-
-                string[] pos = workspace.Workspace[i].Note_pos.Split(',');
-                notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
-                notepad.transform.SetParent(workspaceObject.transform);
-                float xPos = float.Parse(pos[0]);
-                float yPos = float.Parse(pos[1]);
-                Vector3 localpos = new Vector3(xPos, yPos , 0);
-                notepad.transform.localPosition = localpos;
-                notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
-                notepad.GetComponent<NoteCommands>().noteId = workspace.Workspace[i].note_id;
-                if(!notes.Contains(notepad))
-                    notes.Add(notepad);
+                if(workspace.Workspace[i].note_id != 0)
+                {
+                    string[] pos = workspace.Workspace[i].Note_pos.Split(',');
+                    notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+                    notepad.transform.SetParent(workspaceObject.transform);
+                    float xPos = float.Parse(pos[0]);
+                    float yPos = float.Parse(pos[1]);
+                    Vector3 localpos = new Vector3(xPos, yPos, 0);
+                    notepad.transform.localPosition = localpos;
+                    notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
+                    notepad.GetComponent<NoteCommands>().noteId = workspace.Workspace[i].note_id;
+                    if (!notes.Contains(notepad))
+                        notes.Add(notepad);
+                }
             }
             for (int i = 0; i < headerlist.headerList.Count; i++)
             {
-                string[] pos = headerlist.headerList[i].Header_pos.Split(',');
-                header = Instantiate(HeaderPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
-                header.transform.SetParent(workspaceObject.transform);
-                float xPos = float.Parse(pos[0]);
-                float yPos = float.Parse(pos[1]);
-                Vector3 localpos = new Vector3(xPos, yPos, 0);
-                header.transform.localPosition = localpos;
-                header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
-                header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
-                if(!headers.Contains(header))
-                    headers.Add(header);
+                if(headerlist.headerList[i].header_id != 0)
+                {
+                    string[] pos = headerlist.headerList[i].Header_pos.Split(',');
+                    header = Instantiate(HeaderPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+                    header.transform.SetParent(workspaceObject.transform);
+                    float xPos = float.Parse(pos[0]);
+                    float yPos = float.Parse(pos[1]);
+                    Vector3 localpos = new Vector3(xPos, yPos, 0);
+                    header.transform.localPosition = localpos;
+                    header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
+                    header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
+                    if (!headers.Contains(header))
+                        headers.Add(header);
+                }
             }
-            Destroy(GameObject.FindGameObjectWithTag("Numpad"));
-       }, wsId));
+        }, wsId, UserScript.userId));
     }
 
 
@@ -455,6 +511,8 @@ public class VoiceCommands : MonoBehaviour
     {
         if(GameObject.FindGameObjectWithTag("Numpad") == null)
         {
+            if (StartScript.texts[3].transform.GetChild(0).GetComponentInChildren<Text>().text == "To get a workspace\nsay \"get workspace\"")
+                StartScript.texts[3].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
             Quaternion lockrotation = Camera.main.transform.localRotation;
             Instantiate(WsInputPrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0));
         }
@@ -480,49 +538,112 @@ public class VoiceCommands : MonoBehaviour
                 GameObject header = null;
                 for (int i = 0; i < workspace.Workspace.Count; i++)
                 {
-                    string[] pos = workspace.Workspace[i].Note_pos.Split(',');
-                    float xPos = float.Parse(pos[0]);
-                    float yPos = float.Parse(pos[1]);
-                    Vector3 localpos = new Vector3(xPos, yPos, 0);
-                    if(notes[i].GetComponent<NoteCommands>().noteId == workspace.Workspace[i].note_id)
+                    if (workspace.Workspace[i].note_id != 0)
                     {
-                        notes[i].transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
-                        notes[i].transform.localPosition = localpos;
-                    }else
-                    {
-                        notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
-                        notepad.transform.SetParent(workspaceObject.transform);
-                        notepad.transform.localPosition = localpos;
-                        notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
-                        notepad.GetComponent<NoteCommands>().noteId = workspace.Workspace[i].note_id;
-                        if(notes.Contains(notepad))
-                            notes.Add(notepad);
+                        string[] pos = workspace.Workspace[i].Note_pos.Split(',');
+                        float xPos = float.Parse(pos[0]);
+                        float yPos = float.Parse(pos[1]);
+                        Vector3 localpos = new Vector3(xPos, yPos, 0);
+                        if (notes[i].GetComponent<NoteCommands>().noteId == workspace.Workspace[i].note_id)
+                        {
+                            notes[i].transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
+                            notes[i].transform.localPosition = localpos;
+                        }
+                        else
+                        {
+                            notepad = Instantiate(NotepadPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+                            notepad.transform.SetParent(workspaceObject.transform);
+                            notepad.transform.localPosition = localpos;
+                            notepad.transform.GetChild(1).GetComponentInChildren<Text>().text = workspace.Workspace[i].content;
+                            notepad.GetComponent<NoteCommands>().noteId = workspace.Workspace[i].note_id;
+                            if (notes.Contains(notepad))
+                                notes.Add(notepad);
+                        }
                     }
+                    
                 }
                 for (int i = 0; i < headerlist.headerList.Count; i++)
                 {
-                    string[] pos = headerlist.headerList[i].Header_pos.Split(',');
-                    float xPos = float.Parse(pos[0]);
-                    float yPos = float.Parse(pos[1]);
-                    Vector3 localpos = new Vector3(xPos, yPos, 0);
+                    if(headerlist.headerList[i].header_id != 0)
+                    {
+                        string[] pos = headerlist.headerList[i].Header_pos.Split(',');
+                        float xPos = float.Parse(pos[0]);
+                        float yPos = float.Parse(pos[1]);
+                        Vector3 localpos = new Vector3(xPos, yPos, 0);
 
-                    if (headers[i].GetComponent<HeaderScript>().headerId == headerlist.headerList[i].header_id)
-                    {
-                        headers[i].transform.localPosition = localpos;
-                        headers[i].transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
-                    }else
-                    {
-                        header = Instantiate(HeaderPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
-                        header.transform.SetParent(workspaceObject.transform);
-                        header.transform.localPosition = localpos;
-                        header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
-                        header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
-                        if(headers.Contains(header))
-                            headers.Add(header);
+                        if (headers[i].GetComponent<HeaderScript>().headerId == headerlist.headerList[i].header_id)
+                        {
+                            headers[i].transform.localPosition = localpos;
+                            headers[i].transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
+                        }
+                        else
+                        {
+                            header = Instantiate(HeaderPrefab, Camera.main.transform.position + Camera.main.transform.right * i * 0.3f + 2f * Camera.main.transform.forward, workspaceObject.transform.localRotation) as GameObject;
+                            header.transform.SetParent(workspaceObject.transform);
+                            header.transform.localPosition = localpos;
+                            header.transform.GetChild(0).GetComponent<Text>().text = headerlist.headerList[i].header_text;
+                            header.GetComponent<HeaderScript>().headerId = headerlist.headerList[i].header_id;
+                            if (headers.Contains(header))
+                                headers.Add(header);
+                        }
                     }
                 }
             }
-        }, wsId));
+        }, wsId, UserScript.userId));
+    }
+
+    public void createGroup()
+    {
+        Quaternion lockrotation = Camera.main.transform.localRotation;
+        if (UserScript.userId != -1)
+        {
+            StartCoroutine(dbconnection.createGroup(UserScript.userId));
+            if (StartScript.texts[0].transform.GetChild(0).GetComponentInChildren<Text>().text == "To create a group\nsay \"create group\"")
+                StartScript.texts[0].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+            infoText = Instantiate(infoTextPrefab, Camera.main.transform.position + 1f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            infoText.GetComponentInChildren<Text>().text = "You have created group";
+            StartCoroutine(infoTime());
+        }
+        else
+        {
+            infoText = Instantiate(infoTextPrefab, Camera.main.transform.position + 1f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            infoText.GetComponentInChildren<Text>().text = "You may only create a group once you have logged in";
+            StartCoroutine(infoTime());
+        }
+    }
+
+    public void addUserToGroup()
+    {
+        Quaternion lockrotation = Camera.main.transform.localRotation;
+        if (UserScript.userId != -1)
+        {
+            numpadWorkspace = Instantiate(numpadWorkspacePrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            if (StartScript.texts[1].transform.GetChild(0).GetComponentInChildren<Text>().text == "To join a group\nsay \"join group\"")
+                StartScript.texts[1].GetComponentInChildren<Animator>().SetBool("DoAnimation", true); 
+        } else
+        {
+            infoText = Instantiate(infoTextPrefab, Camera.main.transform.position + 1f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            infoText.GetComponentInChildren<Text>().text = "You may only join a group once you have logged in";
+            StartCoroutine(infoTime());
+        }
+        
+    }
+
+    public void addWsToGroup()
+    {
+        Quaternion lockrotation = Camera.main.transform.localRotation;
+        numpadWsToGroup = Instantiate(numpadWsToGroupPrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+        if (StartScript.texts[2].transform.GetChild(0).GetComponentInChildren<Text>().text == "To share a workspace\nsay \"share workspace\"")
+            StartScript.texts[2].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+    }
+
+    public void hideGuide()
+    {
+        int length = StartScript.texts.Length;
+        for(int i = 0; i <= length; i++)
+        {
+            StartScript.texts[i].GetComponentInChildren<Animator>().SetBool("DoAnimation", true);
+        }
     }
 
 }

@@ -18,33 +18,28 @@ public class StartScript : MonoBehaviour {
     public GameObject userIDPref;
     private GameObject userID;
 
-    private GameObject numpad;
-
     public bool hit;
     public RaycastHit hitInfo;
-    private bool once = false;
     private bool isLoading = false;
     private float timestamp = 0;
     private static float current = 0;
 
     // Use this for initialization
     void Start () {
-        Debug.Log(timestamp);
-        if (SpeechManager.getLogin())
+        current = 0;
+        if (UserScript.userId != -1)
         {
-            timestamp = Time.deltaTime/4;
-            Debug.Log(timestamp);
+            timestamp = Time.deltaTime / 2;
         }
         else
         {
             timestamp = Time.deltaTime;
-            Debug.Log(timestamp);
         }
         bar = Instantiate(loadingBar, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
-        /*userID = Instantiate(userIDPref, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
-        userID.GetComponentInChildren<Text>().text = "User: " + UserScript.userId;*/
+        bar.transform.GetChild(1).GetComponent<Image>().fillAmount = 0;
+        userID = Instantiate(userIDPref, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
+        userID.GetComponentInChildren<Text>().text = "User: " + UserScript.userId;
         isLoading = true;
-        Debug.Log(bar.name);
         if(UserScript.userId != -1)
         {
             SpeechManager.setLoginTrue();
@@ -81,25 +76,22 @@ public class StartScript : MonoBehaviour {
             bar.transform.LookAt(2f * bar.transform.position - Camera.main.transform.position);
             bar.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
 
-            if(SpeechManager.getLogin())
+            if(UserScript.userId != -1)
             {
                 welcomeText.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 1f));
                 welcomeText.transform.LookAt(2f * welcomeText.transform.position - Camera.main.transform.position);
                 welcomeText.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
-                Debug.Log(welcomeText.name);
             }
             
         }
         
         hit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 20f, SpatialMappingManager.Instance.LayerMask);
-
-        /*PROOOOOOOOOOOBLEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
         if (UserScript.userId != -1)
         {
-            userID.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.46f, 0.57f, 1f));
+            userID.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.9f, 0.95f, 1f));
             userID.transform.LookAt(2f * userID.transform.position - Camera.main.transform.position);
             userID.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
-        }*/
+        }
         
     }
 
@@ -125,28 +117,78 @@ public class StartScript : MonoBehaviour {
     {
         if (current >= 100f)
         {
+            Vector3 pos = new Vector3(0f, -0.1f, 0f);
+            Quaternion lockrotation = Camera.main.transform.localRotation;
             //Wait for loading to finish then instantiate tutorials depending on what we are looking at
             if (hit && !isLoading)
             {
-                Quaternion lockrotation = Camera.main.transform.localRotation;
-                texts = new GameObject[3];
-                texts[0] = Instantiate(text, hitInfo.point, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                texts[1] = Instantiate(text, hitInfo.point + texts[0].transform.right * -0.2f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                texts[2] = Instantiate(text, hitInfo.point + texts[0].transform.right * 0.2f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                texts[0].GetComponentInChildren<Text>().text = "To edit a note\nsay \"edit note\"";
-                texts[1].GetComponentInChildren<Text>().text = "To create a note\nsay \"create note\"";
-                texts[2].GetComponentInChildren<Text>().text = "To remove a note\nsay \"remove note\"";
+                if(UserScript.userId != -1)
+                {
+                    texts = new GameObject[5];
+                    texts[0] = Instantiate(text, hitInfo.point, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[1] = Instantiate(text, hitInfo.point + texts[0].transform.right * -0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[2] = Instantiate(text, hitInfo.point + texts[0].transform.right * 0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[3] = Instantiate(text, hitInfo.point + texts[0].transform.right * -0.3f + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[4] = Instantiate(text, hitInfo.point + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[0].GetComponentInChildren<Text>().text = "To create a group\nsay \"create group\"";
+                    texts[1].GetComponentInChildren<Text>().text = "To join a group\nsay \"join group\"";
+                    texts[2].GetComponentInChildren<Text>().text = "To share a workspace\nsay \"share workspace\"";
+                    texts[3].GetComponentInChildren<Text>().text = "To get a workspace\nsay \"get workspace\"";
+                    texts[4].GetComponentInChildren<Text>().text = "To hide the guide\nsay \"close guide\"";
+                }
+                else
+                {
+                    texts = new GameObject[7];
+                    texts[0] = Instantiate(text, hitInfo.point, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[1] = Instantiate(text, hitInfo.point + texts[0].transform.right * -0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[2] = Instantiate(text, hitInfo.point + texts[0].transform.right * 0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[3] = Instantiate(text, hitInfo.point + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[4] = Instantiate(text, hitInfo.point + texts[0].transform.right * -0.3f + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[5] = Instantiate(text, hitInfo.point + texts[0].transform.right * 0.3f + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[6] = Instantiate(text, hitInfo.point + pos + pos + texts[0].transform.right * -0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[0].GetComponentInChildren<Text>().text = "To edit a note\nsay \"edit note\"";
+                    texts[1].GetComponentInChildren<Text>().text = "To create a note\nsay \"create note\"";
+                    texts[2].GetComponentInChildren<Text>().text = "To remove a note\nsay \"remove note\"";
+                    texts[3].GetComponentInChildren<Text>().text = "To open workspace menu\nsay \"open menu\"";
+                    texts[4].GetComponentInChildren<Text>().text = "To create a workspace\nsay \"create workspace\"";
+                    texts[5].GetComponentInChildren<Text>().text = "For further functions you\nhave to login, say login";
+                    texts[6].GetComponentInChildren<Text>().text = "To hide the guide\nsay \"close guide\"";
+                }
             }
             else if (!isLoading)
             {
-                Quaternion lockrotation = Camera.main.transform.localRotation;
-                texts = new GameObject[3];
-                texts[0] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                texts[1] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * -0.2f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                texts[2] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * 0.2f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
-                texts[0].GetComponentInChildren<Text>().text = "To edit a note\nsay \"edit note\"";
-                texts[1].GetComponentInChildren<Text>().text = "To create a note\nsay \"create note\"";
-                texts[2].GetComponentInChildren<Text>().text = "To remove a note\nsay \"remove note\"";
+                if(UserScript.userId != -1)
+                {
+                    texts = new GameObject[5];
+                    texts[0] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[1] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * -0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[2] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * 0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[3] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * -0.3f + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[4] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[0].GetComponentInChildren<Text>().text = "To create a group\nsay \"create group\"";
+                    texts[1].GetComponentInChildren<Text>().text = "To join a group\nsay \"join group\"";
+                    texts[2].GetComponentInChildren<Text>().text = "To share a workspace\nsay \"share workspace\"";
+                    texts[3].GetComponentInChildren<Text>().text = "To get a workspace\nsay \"get workspace\"";
+                    texts[4].GetComponentInChildren<Text>().text = "To hide the guide\nsay \"close guide\"";
+                }
+                else
+                {
+                    texts = new GameObject[7];
+                    texts[0] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[1] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * -0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[2] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * 0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[3] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[4] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * -0.3f + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[5] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + texts[0].transform.right * 0.3f + pos, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[6] = Instantiate(text, Camera.main.transform.position + 2f * Camera.main.transform.forward + pos + pos + texts[0].transform.right * -0.3f, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+                    texts[0].GetComponentInChildren<Text>().text = "To edit a note\nsay \"edit note\"";
+                    texts[1].GetComponentInChildren<Text>().text = "To create a note\nsay \"create note\"";
+                    texts[2].GetComponentInChildren<Text>().text = "To remove a note\nsay \"remove note\"";
+                    texts[3].GetComponentInChildren<Text>().text = "To open workspace menu\nsay \"open menu\"";
+                    texts[4].GetComponentInChildren<Text>().text = "To create a workspace\nsay \"create workspace\"";
+                    texts[5].GetComponentInChildren<Text>().text = "For further functions you\nhave to login, say login";
+                    texts[6].GetComponentInChildren<Text>().text = "To hide the guide\nsay \"close guide\"";
+                }
             }
         }
     }

@@ -24,6 +24,11 @@ namespace conn
         string getWorkspaceURL = "http://libanaden.com/getWorkspace.php";
         string setWorkspaceSizeURL = "http://libanaden.com/insertWorkspaceSize.php";
         string checkWorkspaceSizeURL = "http://libanaden.com/checkWorkspaceSize.php";
+        string addUserToGroupURL = "http://libanaden.com/addUserToGroup.php";
+        string addUserToWorkspaceURL = "http://libanaden.com/addUserToWorkspace.php";
+        string addWsToGroupURL = "http://libanaden.com/addWsToGroup.php";
+        string createGroupURL = "http://libanaden.com/createGroup.php";
+
         public string id;
 
         public static bool sizeUpdate = false;
@@ -201,20 +206,6 @@ namespace conn
         }
 
         /// <summary>
-        /// Gets a specific workspace from the database.
-        /// </summary>
-        /// <param name="ws_id"></param>
-        /// <returns></returns>
-        public IEnumerator getWorkspace(int ws_id)
-        {
-            WWWForm form = new WWWForm();
-            form.AddField("ws_id", ws_id);
-            WWW www = new WWW(getWorkspaceURL, form);
-            yield return www;
-            Debug.Log(www.text);
-        }
-
-        /// <summary>
         /// Save the workspace width and height.
         /// </summary>
         /// <param name="ws_id"></param>
@@ -229,22 +220,38 @@ namespace conn
             WWW www = new WWW(setWorkspaceSizeURL, form);
         }
 
-        /// <summary>
-        /// Updates the workspace width and height.
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public IEnumerator updateWorkspaceSize(System.Action<string> callback, int id)
+        public void addUserToGroup(int user_id, int group_id)
         {
-           
             WWWForm form = new WWWForm();
-            form.AddField("id", id);
-            WWW www = new WWW(checkWorkspaceSizeURL, form);
-
-            yield return www;
-            callback(www.text);
-            
+            form.AddField("user_id", user_id);
+            form.AddField("group_id", group_id);
+            WWW www = new WWW(addUserToGroupURL, form);
         }
+
+        public void addUserToWorkspace(int ws_id, int user_id)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("ws_id", ws_id);
+            form.AddField("user_id", user_id);
+            WWW www = new WWW(addUserToWorkspaceURL, form);
+        }
+
+        public void addWsToGroup(int ws_id, int group_id)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("ws_id", ws_id);
+            form.AddField("group_id", group_id);
+            WWW www = new WWW(addWsToGroupURL, form);
+        }
+
+        public IEnumerator createGroup(int user_id)
+        {
+            WWWForm form = new WWWForm();
+            form.AddField("user_id", user_id);
+            WWW www = new WWW(createGroupURL, form);
+            yield return www;
+            Debug.Log(www.text);
+        }
+
     }
 }

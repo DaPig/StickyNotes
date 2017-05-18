@@ -1,21 +1,33 @@
 ﻿using UnityEngine;
 using System;
 using UnityEngine.UI;
-
+using conn;
+using System.Collections;
 
 public class NumpadScript : MonoBehaviour {
 
     GameObject login;
 
-	// Use this for initialization
-	void Start () {
-		
+    private connect dbconnection;
+
+    public GameObject infoTextPrefab;
+    private GameObject infoText;
+
+    public LayerMask myLayerMask;
+    // Use this for initialization
+    void Start () {
+        dbconnection = new connect();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+        if (infoText != null)
+        {
+            infoText.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 1f));
+            infoText.transform.LookAt(2f * infoText.transform.position - Camera.main.transform.position);
+            infoText.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
+        }
+    }
 
     /// <summary>
     /// Writes the number on the button pressed on the loginfield.
@@ -84,5 +96,45 @@ public class NumpadScript : MonoBehaviour {
         VoiceCommands input = GameObject.Find("InputManager").GetComponent<VoiceCommands>();
         string WsField = GameObject.Find("WsText").GetComponentInChildren<Text>().text;
         input.getWorkspace(Int32.Parse(WsField));
+    }
+
+    public void enterGroupId()
+    {
+        if(infoText == null)
+        {
+            Quaternion lockrotation = Camera.main.transform.localRotation;
+            string WsField = GameObject.Find("WsText").GetComponentInChildren<Text>().text;
+            dbconnection.addUserToGroup(UserScript.userId, Int32.Parse(WsField));
+            GameObject.FindGameObjectWithTag("Numpad").GetComponent<Renderer>().enabled = false;
+            infoText = Instantiate(infoTextPrefab, Camera.main.transform.position + 1f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            infoText.GetComponentInChildren<Text>().text = "Welcome to group " + WsField;
+            StartCoroutine(infoErrorTime());
+        }
+    }
+
+    public void enterSharedWsId()
+    {
+        if (infoText == null)
+        {
+            Vector3 headPosition = Camera.main.transform.position;
+            Vector3 gazeDirection = Camera.main.transform.forward;
+            RaycastHit hitInfo;
+            Physics.Raycast(headPosition, gazeDirection, out hitInfo, 30.0f, myLayerMask);
+            Quaternion lockrotation = Camera.main.transform.localRotation;
+            string WsField = GameObject.Find("WsText").GetComponentInChildren<Text>().text;
+            int id = hitInfo.collider.gameObject.GetComponent<WorkspaceScript>().id;
+            dbconnection.addWsToGroup(id, Int32.Parse(WsField));
+            GameObject.FindGameObjectWithTag("Numpad").GetComponent<Renderer>().enabled = false;
+            infoText = Instantiate(infoTextPrefab, Camera.main.transform.position + 1f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
+            infoText.GetComponentInChildren<Text>().text = "Your workspace has now been added to group " + WsField;
+            StartCoroutine(infoErrorTime());
+        }
+    }
+
+    public IEnumerator infoErrorTime()
+    {
+        yield return new WaitForSeconds(2f);
+        Destroy(infoText);
+        Destroy(GameObject.FindGameObjectWithTag("Numpad"));
     }
 }

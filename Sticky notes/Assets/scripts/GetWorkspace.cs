@@ -69,10 +69,11 @@ namespace getWs
         public Text txt;
         string url = "http://libanaden.com/getWorkspace.php";
 
-        public IEnumerator getWS(System.Action<WorkspaceList, HeaderList> callback, int ws_id)
+        public IEnumerator getWS(System.Action<WorkspaceList, HeaderList> callback, int ws_id, int user_id)
         {
             WWWForm form = new WWWForm();
             form.AddField("ws_id", ws_id);
+            form.AddField("user_id", user_id);
             WWW www = new WWW(url, form);
             yield return www;
             if (www.error == null)

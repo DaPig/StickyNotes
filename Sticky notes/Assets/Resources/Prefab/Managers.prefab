@@ -857,6 +857,12 @@ MonoBehaviour:
     type: 2}
   ErrorTextPrefab: {fileID: 1648602484259856, guid: c2cd7311dbfcb4b478d77e14feef7b64,
     type: 2}
+  numpadWorkspacePrefab: {fileID: 1975322604597600, guid: e06eff19fba62194cb0344457c8aee68,
+    type: 2}
+  numpadWsToGroupPrefab: {fileID: 1058649040403608, guid: e1c653273b4f19a4fab5639ddf82bf7c,
+    type: 2}
+  infoTextPrefab: {fileID: 1591884843772672, guid: 79a8ef64af65b5d4d9c34c090d836803,
+    type: 2}
   notes: []
   headers: []
   hit: 0
@@ -1580,6 +1586,78 @@ MonoBehaviour:
         m_Calls:
         - m_Target: {fileID: 114221983260728432}
           m_MethodName: updateWorkspace
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - Keyword: Create group
+    KeyCode: 0
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114221983260728432}
+          m_MethodName: createGroup
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - Keyword: Join group
+    KeyCode: 0
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114221983260728432}
+          m_MethodName: addUserToGroup
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - Keyword: Share workspace
+    KeyCode: 0
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114221983260728432}
+          m_MethodName: addWsToGroup
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+      m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+  - Keyword: Close guide
+    KeyCode: 0
+    Response:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 114221983260728432}
+          m_MethodName: hideGuide
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
