@@ -116,14 +116,9 @@ public class NumpadScript : MonoBehaviour {
     {
         if (infoText == null)
         {
-            Vector3 headPosition = Camera.main.transform.position;
-            Vector3 gazeDirection = Camera.main.transform.forward;
-            RaycastHit hitInfo;
-            Physics.Raycast(headPosition, gazeDirection, out hitInfo, 30.0f, myLayerMask);
             Quaternion lockrotation = Camera.main.transform.localRotation;
             string WsField = GameObject.Find("WsText").GetComponentInChildren<Text>().text;
-            int id = hitInfo.collider.gameObject.GetComponent<WorkspaceScript>().id;
-            dbconnection.addWsToGroup(id, Int32.Parse(WsField));
+            dbconnection.addWsToGroup(VoiceCommands.wsId, Int32.Parse(WsField));
             GameObject.FindGameObjectWithTag("Numpad").GetComponent<Renderer>().enabled = false;
             infoText = Instantiate(infoTextPrefab, Camera.main.transform.position + 1f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             infoText.GetComponentInChildren<Text>().text = "Your workspace has now been added to group " + WsField;

@@ -45,6 +45,7 @@ public class VoiceCommands : MonoBehaviour
 
     public bool hit;
     public RaycastHit hitInfo;
+    public static int wsId;
 
     protected SpatialMappingManager spatialMappingManager;
     public LayerMask myLayerMask;
@@ -128,6 +129,7 @@ public class VoiceCommands : MonoBehaviour
                 {
                     notepad = Instantiate(NotepadPrefab, GazeManager.Instance.HitPosition, workspace.transform.rotation) as GameObject;
                     notepad.transform.SetParent(workspace.transform);
+                    dbconnection.saveWs(Int32.Parse(id), workspace.GetComponent<WorkspaceScript>().id);
                 }
             }
             else if (hit)
@@ -141,15 +143,8 @@ public class VoiceCommands : MonoBehaviour
             //notepad = Instantiate(Notepad, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
             notepad.GetComponent<NoteCommands>().noteId = Int32.Parse(id);
             notes.Add(notepad);
-            if(workspace != null)
-            {
-                if (notepad.transform.parent.tag == "Workspace")
-                {
-                    string pos = notepad.transform.localPosition.x + "," + notepad.transform.localPosition.y;
-                    dbconnection.saveNotePos(Int32.Parse(id), pos);
-                }
-            }
-            
+            string pos = notepad.transform.localPosition.x + "," + notepad.transform.localPosition.y;
+            dbconnection.saveNotePos(Int32.Parse(id), pos);
             
         }, "", user));
         if (StartScript.texts[1].transform.GetChild(0).GetComponentInChildren<Text>().text == "To create a note\nsay \"create note\"")
@@ -274,7 +269,7 @@ public class VoiceCommands : MonoBehaviour
             ws.GetComponent<WorkspaceScript>().id = Int32.Parse(id);
             Debug.Log(ws.transform.GetComponent<RectTransform>().rect.width);
             dbconnection.saveWorkspaceSize(Int32.Parse(id), ws.transform.GetComponent<RectTransform>().rect.width.ToString(), ws.transform.GetComponent<RectTransform>().rect.height.ToString());
-            ws.transform.GetChild(2).GetComponentInChildren<Text>().text = id;
+            ws.transform.GetChild(2).GetComponentInChildren<Text>().text = "ID: " + id;
             if (UserScript.userId != -1)
             {
                 dbconnection.addUserToWorkspace(UserScript.userId, Int32.Parse(id));
@@ -463,7 +458,7 @@ public class VoiceCommands : MonoBehaviour
             float height = float.Parse(workspace.Workspace[0].height);
             workspaceObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
             workspaceObject.GetComponent<WorkspaceScript>().id = workspace.Workspace[0].ws_id;
-            workspaceObject.transform.GetChild(2).GetComponentInChildren<Text>().text = "ID:" + workspaceObject.GetComponent<WorkspaceScript>().id;
+            workspaceObject.transform.GetChild(2).GetComponentInChildren<Text>().text = "ID: " + workspaceObject.GetComponent<WorkspaceScript>().id;
             GameObject notepad;
             GameObject header;
             for (int i = 0; i < workspace.Workspace.Count; i++)
@@ -631,6 +626,11 @@ public class VoiceCommands : MonoBehaviour
 
     public void addWsToGroup()
     {
+        Vector3 headPosition = Camera.main.transform.position;
+        Vector3 gazeDirection = Camera.main.transform.forward;
+        RaycastHit hitInfo;
+        Physics.Raycast(headPosition, gazeDirection, out hitInfo, 30.0f, myLayerMask);
+        wsId = hitInfo.collider.gameObject.GetComponent<WorkspaceScript>().id;
         Quaternion lockrotation = Camera.main.transform.localRotation;
         numpadWsToGroup = Instantiate(numpadWsToGroupPrefab, Camera.main.transform.position + 2f * Camera.main.transform.forward, Quaternion.Euler(lockrotation.eulerAngles.x, lockrotation.eulerAngles.y, 0)) as GameObject;
         if (StartScript.texts[2].transform.GetChild(0).GetComponentInChildren<Text>().text == "To share a workspace\nsay \"share workspace\"")

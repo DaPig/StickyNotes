@@ -202,7 +202,6 @@ namespace conn
             form.AddField("note_id", note_id);
             WWW www = new WWW(removeNoteRelationURL, form);
             yield return www;
-            Debug.Log(www.text);
         }
 
         /// <summary>
@@ -250,7 +249,6 @@ namespace conn
             form.AddField("user_id", user_id);
             WWW www = new WWW(createGroupURL, form);
             yield return www;
-            Debug.Log(www.text);
         }
 
     }

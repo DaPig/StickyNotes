@@ -88,7 +88,7 @@ public class StartScript : MonoBehaviour {
         hit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hitInfo, 20f, SpatialMappingManager.Instance.LayerMask);
         if (UserScript.userId != -1)
         {
-            userID.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.9f, 0.95f, 1f));
+            userID.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.88f, 0.98f, 1f));
             userID.transform.LookAt(2f * userID.transform.position - Camera.main.transform.position);
             userID.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
         }

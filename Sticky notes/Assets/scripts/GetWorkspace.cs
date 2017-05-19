@@ -78,7 +78,6 @@ namespace getWs
             yield return www;
             if (www.error == null)
             {
-                Debug.Log(www.text);
                 string[] data = www.text.Split('|');
                 string headerText = data[1].Remove(data[1].Length - 2);
                 WorkspaceList list = WorkspaceList.CreateFromJSON("{\"Workspace\":" + data[0] + "}");

@@ -108,7 +108,7 @@ public class SpeechManager : MonoBehaviour
             }
             if (timestamp != 0)
             {
-                current += (10 * timestamp);
+                current += (20 * timestamp);
                 currentLoading.transform.GetChild(0).GetChild(0).GetComponent<Image>().fillAmount = current / 100;
             }
 
