@@ -18,7 +18,7 @@ public class WorkspaceScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         dbconnection = new connect();
-        InvokeRepeating("updateSize", 0f, 1f);
+       // InvokeRepeating("updateSize", 0f, 1f);
 	}
 	
 	// Update is called once per frame

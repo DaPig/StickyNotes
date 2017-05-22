@@ -17,7 +17,6 @@ public class SpeechManager : MonoBehaviour
     private AudioFeedback audio;
 
     private float current;
-    private float timestamp;
 
     public GameObject loading;
     private GameObject currentLoading;
@@ -46,7 +45,6 @@ public class SpeechManager : MonoBehaviour
 
     void Awake()
     {
-        timestamp = 0;
 
         audio = new AudioFeedback();
 
@@ -75,6 +73,8 @@ public class SpeechManager : MonoBehaviour
 
         // Use this to reset the UI once the Microphone is done recording after it was started.
         hasRecordingStarted = false;
+
+        InvokeRepeating("fillRecBar", 0f, 0.0165f);
     }
 
     void Update()
@@ -91,7 +91,6 @@ public class SpeechManager : MonoBehaviour
             // Look at the StopRecording function.
             SendMessage("RecordStop");
 
-            timestamp = 0;
             current = 0;
             Destroy(currentLoading);
         }
@@ -106,12 +105,6 @@ public class SpeechManager : MonoBehaviour
                 infoText.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.2f, 1));
                 infoText.transform.LookAt(2f * infoText.transform.position - Camera.main.transform.position);
             }
-            if (timestamp != 0)
-            {
-                current += (20 * timestamp);
-                currentLoading.transform.GetChild(0).GetChild(0).GetComponent<Image>().fillAmount = current / 100;
-            }
-
             if (currentLoading != null)
             {
                 currentLoading.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.7f, 0.5f, 1f));
@@ -121,6 +114,15 @@ public class SpeechManager : MonoBehaviour
         }
         
         
+    }
+
+    public void fillRecBar()
+    {
+        if(hasRecordingStarted)
+        {
+            current += (15 * 0.0165f);
+            currentLoading.transform.GetChild(0).GetChild(0).GetComponent<Image>().fillAmount = current / 100;
+        }
     }
 
     /// <summary>
@@ -147,7 +149,6 @@ public class SpeechManager : MonoBehaviour
         hasRecordingStarted = true;
 
         //Used to fill the loading circle
-        timestamp = Time.deltaTime;
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
     }

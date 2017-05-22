@@ -27,14 +27,7 @@ public class StartScript : MonoBehaviour {
     // Use this for initialization
     void Start () {
         current = 0;
-        if (UserScript.userId != -1)
-        {
-            timestamp = Time.deltaTime / 2;
-        }
-        else
-        {
-            timestamp = Time.deltaTime;
-        }
+        InvokeRepeating("fillLoadingBar", 0f, 0.0165f);
         bar = Instantiate(loadingBar, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
         bar.transform.GetChild(1).GetComponent<Image>().fillAmount = 0;
         userID = Instantiate(userIDPref, Camera.main.transform.position, Camera.main.transform.rotation) as GameObject;
@@ -70,8 +63,7 @@ public class StartScript : MonoBehaviour {
                 DoSomething();
             }
             //Changes the fill ammount of the loading bar
-            current += (20 * timestamp);
-            bar.transform.GetChild(1).GetComponent<Image>().fillAmount = current / 100;
+            
             bar.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.25f, 1f));
             bar.transform.LookAt(2f * bar.transform.position - Camera.main.transform.position);
             bar.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
@@ -93,6 +85,15 @@ public class StartScript : MonoBehaviour {
             userID.transform.rotation = Quaternion.Euler(Camera.main.transform.rotation.eulerAngles.x, Camera.main.transform.rotation.eulerAngles.y, Camera.main.transform.rotation.eulerAngles.z);
         }
         
+    }
+
+    public void fillLoadingBar()
+    {
+        if(isLoading)
+        {
+            current += (20 * 0.0165f);
+            bar.transform.GetChild(1).GetComponent<Image>().fillAmount = current / 100;
+        }
     }
 
     /// <summary>
