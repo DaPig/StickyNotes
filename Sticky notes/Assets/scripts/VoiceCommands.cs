@@ -99,11 +99,10 @@ public class VoiceCommands : MonoBehaviour
     {
         if (GazeManager.Instance.IsGazingAtObject)
         {
-            GazeManager.Instance.HitObject.transform.GetChild(3).GetComponentInChildren<Text>().text = "";
+            GazeManager.Instance.HitObject.transform.GetChild(1).GetComponentInChildren<Text>().text = "";
+            dbconnection.editNote(GazeManager.Instance.HitObject.GetComponent<NoteCommands>().noteId.ToString(), "");
+            SpeechManager.clearText();
         }
-        Debug.Log(GazeManager.Instance.HitObject.transform.GetChild(3).GetComponentInChildren<Text>().text);
-        dbconnection.editNote(GazeManager.Instance.HitObject.GetComponent<NoteCommands>().noteId.ToString(), "");
-        SpeechManager.clearText();
     }
 
     /// <summary>

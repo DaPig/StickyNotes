@@ -19,7 +19,7 @@ public class SpeechManager : MonoBehaviour
     private float current;
 
     public GameObject loading;
-    private GameObject currentLoading;
+    private static GameObject currentLoading;
 
 
     private static connect dbconnection;
@@ -92,7 +92,7 @@ public class SpeechManager : MonoBehaviour
             SendMessage("RecordStop");
 
             current = 0;
-            Destroy(currentLoading);
+           
         }
         if (dictationRecognizer.Status != SpeechSystemStatus.Running)
         {
@@ -131,6 +131,9 @@ public class SpeechManager : MonoBehaviour
     /// <returns>The audio clip recorded from the microphone.</returns>
     public AudioClip StartRecording(GameObject note)
     {
+        textSoFar.Length = 0;
+        textSoFar.Append(note.GetComponentInChildren<Text>().text);
+       
         //Instantiate the loading circle and play the audio queue
         currentLoading = Instantiate(loading, Camera.main.transform.position + 1f * Camera.main.transform.forward, Camera.main.transform.localRotation);
         audio.playSound();
@@ -228,6 +231,7 @@ public class SpeechManager : MonoBehaviour
             textObject.GetComponentInParent<TapToPlace>().enabled = true;
         }
         Microphone.End(deviceName);
+        Destroy(currentLoading);
     }
 
     /// <summary>
